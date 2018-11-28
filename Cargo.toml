@@ -1,0 +1,11 @@
+[package]
+name = "colored_json"
+version = "0.1.0"
+authors = ["Jens Reimann <jreimann@redhat.com>"]
+
+[dependencies]
+
+serde = "1.0"
+serde_json = "1.0"
+
+colored = "1.6"
