@@ -23,6 +23,9 @@ use colored::*;
 
 use std::io;
 
+#[cfg(test)]
+mod test;
+
 pub struct ColoredFormatter<F>
 where
     F: Formatter,
