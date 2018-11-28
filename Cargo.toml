@@ -3,6 +3,18 @@ name = "colored_json"
 version = "0.1.0"
 authors = ["Jens Reimann <jreimann@redhat.com>"]
 
+description = "Colorize JSON, for printing it out on the command line"
+
+homepage = "https://github.com/ctron/colored_json"
+repository = "https://github.com/ctron/colored_json"
+
+keywords = ["json", "colored"]
+categories = ["command-line-interface", "encoding", "visualization"]
+license = "EPL-2.0"
+
+[badges]
+travis-ci = { repository = "ctron/colored_json", branch = "master" }
+
 [dependencies]
 
 serde = "1.0"
