@@ -4,6 +4,13 @@ colored_json crate to output colored serde json with ANSI terminal escape codes
 # Examples
 
 ```rust
+    extern crate serde_json;
+    extern crate colored_json;
+
+    use serde_json::json;
+
+    use colored_json::to_colored_json;
+
     let s = to_colored_json(&json!({
       "name": "John Doe",
       "age": 43,
@@ -11,13 +18,22 @@ colored_json crate to output colored serde json with ANSI terminal escape codes
         "+44 1234567",
         "+44 2345678"
       ]
-    }))?;
+    })).unwrap();
     println!("{}", s);
 ```
 
 With a custom color style:
 
 ```rust
+    extern crate serde_json;
+    extern crate colored_json;
+
+    use serde_json::json;
+    use serde_json::ser::CompactFormatter;
+
+    use colored_json::{ColoredFormatter, Styler, Style};
+    use colored_json::Colour::{Green, Blue};
+
     let f = ColoredFormatter::with_styler(
         CompactFormatter {},
         Styler {
@@ -36,14 +52,14 @@ With a custom color style:
             "+44 1234567",
             "+44 2345678"
           ]
-        }))?
+        })).unwrap()
     );
 
     println!(
         "{}",
         f.to_colored_json(&json!({
         "name":"John", "age":31, "city":"New York"
-    }))?
+    })).unwrap()
     );
 ```
 
@@ -53,8 +69,8 @@ extern crate ansi_term;
 extern crate serde;
 extern crate serde_json;
 
-use ansi_term::Colour::{Blue, Green};
-use ansi_term::Style;
+pub use ansi_term::Colour;
+pub use ansi_term::Style;
 use serde::Serialize;
 use serde_json::ser::{Formatter, PrettyFormatter};
 use serde_json::value::Value;
@@ -74,8 +90,8 @@ pub struct Styler {
 impl Default for Styler {
     fn default() -> Styler {
         Styler {
-            key: Style::new().fg(Blue).bold(),
-            value: Style::new().fg(Green),
+            key: Style::new().fg(Colour::Blue).bold(),
+            value: Style::new().fg(Colour::Green),
             object: Style::new().bold(),
         }
     }
