@@ -7,6 +7,7 @@ description = "Colorize JSON, for printing it out on the command line"
 
 homepage = "https://github.com/ctron/colored_json"
 repository = "https://github.com/ctron/colored_json"
+documentation = "https://docs.rs/colored_json"
 
 keywords = ["json", "colored"]
 categories = ["command-line-interface", "encoding", "visualization"]
