@@ -1,3 +1,21 @@
+/*!
+colored_json crate to output colored serde json with ANSI terminal escape codes
+
+# Examples
+
+```rust
+    let s = to_colored_json(&json!({
+      "name": "John Doe",
+      "age": 43,
+      "phones": [
+        "+44 1234567",
+        "+44 2345678"
+      ]
+    }))?;
+    println!("{}", s);
+```
+!*/
+
 /*******************************************************************************
  * Copyright (c) 2018 Red Hat Inc
  *
@@ -320,7 +338,12 @@ where
         self.formatter.write_raw_fragment(writer, fragment)
     }
 }
-
+/// Serialize the given data structure as a pretty-color-printed String of JSON.
+///
+/// # Errors
+///
+/// Serialization can fail if `T`'s implementation of `Serialize` decides to
+/// fail, or if `T` contains a map with non-string keys.
 pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
     let mut writer: Vec<u8> = Vec::with_capacity(128);
 
@@ -329,6 +352,14 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
     return Ok(String::from_utf8_lossy(&writer).to_string());
 }
 
+
+/// Serialize the given data structure as pretty-color-printed JSON into the IO
+/// stream.
+///
+/// # Errors
+///
+/// Serialization can fail if `T`'s implementation of `Serialize` decides to
+/// fail, or if `T` contains a map with non-string keys.
 pub fn write_colored_json<W>(
     value: &Value,
     writer: &mut W,
