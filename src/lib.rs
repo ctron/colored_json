@@ -11,27 +11,46 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-extern crate colored;
+extern crate ansi_term;
 extern crate serde;
 extern crate serde_json;
 
+use ansi_term::Colour::{Blue, Green};
+use ansi_term::Style;
 use serde::Serialize;
 use serde_json::ser::{Formatter, PrettyFormatter};
 use serde_json::value::Value;
-
-use colored::*;
 
 use std::io;
 
 #[cfg(test)]
 mod test;
 
+#[derive(Clone)]
+pub struct Styler {
+    pub key: Style,
+    pub value: Style,
+    pub object: Style,
+}
+
+impl Default for Styler {
+    fn default() -> Styler {
+        Styler {
+            key: Style::new().fg(Blue).bold(),
+            value: Style::new().fg(Green),
+            object: Style::new(),
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct ColoredFormatter<F>
 where
     F: Formatter,
 {
     formatter: F,
-    colorizer: Vec<fn(ColoredString) -> ColoredString>,
+    styler: Styler,
+    colorizer: Vec<Style>,
 }
 
 impl<F> ColoredFormatter<F>
@@ -41,20 +60,42 @@ where
     pub fn new(formatter: F) -> Self {
         return ColoredFormatter {
             formatter,
+            styler: Styler::default(),
             colorizer: Vec::new(),
         };
     }
+
+    pub fn with_styler(formatter: F, styler: Styler) -> Self {
+        return ColoredFormatter {
+            formatter,
+            styler: styler,
+            colorizer: Vec::new(),
+        };
+    }
+
+    pub fn to_colored_json(self, value: &Value) -> serde_json::Result<String> {
+        let mut writer: Vec<u8> = Vec::with_capacity(128);
+
+        self.write_colored_json(value, &mut writer)?;
+
+        return Ok(String::from_utf8_lossy(&writer).to_string());
+    }
+
+    pub fn write_colored_json<W>(
+        self,
+        value: &Value,
+        writer: &mut W,
+    ) -> std::result::Result<(), serde_json::Error>
+    where
+        W: io::Write,
+    {
+        let mut serializer = serde_json::Serializer::with_formatter(writer, self);
+
+        return value.serialize(&mut serializer);
+    }
 }
 
-fn color_object_key(c: ColoredString) -> ColoredString {
-    c.bright_blue().bold()
-}
-
-fn colored<W: ?Sized, H>(
-    writer: &mut W,
-    colorizer: Option<fn(ColoredString) -> ColoredString>,
-    mut handler: H,
-) -> io::Result<()>
+fn colored<W: ?Sized, H>(writer: &mut W, colorizer: Option<Style>, mut handler: H) -> io::Result<()>
 where
     W: io::Write,
     H: FnMut(&mut Vec<u8>) -> io::Result<()>,
@@ -64,7 +105,7 @@ where
     let s = String::from_utf8_lossy(&w);
 
     let out = match colorizer {
-        Some(c) => format!("{}", c(ColoredString::from(s.as_ref()))),
+        Some(c) => c.paint(s).to_string(),
         None => s.to_string(),
     };
     Ok(writer.write_all(out.as_bytes())?)
@@ -224,7 +265,7 @@ where
     where
         W: io::Write,
     {
-        colored(writer, Some(Colorize::bold), |w| {
+        colored(writer, Some(self.styler.object), |w| {
             self.formatter.begin_object(w)
         })
     }
@@ -233,7 +274,7 @@ where
     where
         W: io::Write,
     {
-        colored(writer, Some(Colorize::bold), |w| {
+        colored(writer, Some(self.styler.object), |w| {
             self.formatter.end_object(w)
         })
     }
@@ -242,7 +283,7 @@ where
     where
         W: io::Write,
     {
-        self.colorizer.push(color_object_key);
+        self.colorizer.push(self.styler.key);
         self.formatter.begin_object_key(writer, first)
     }
 
@@ -259,7 +300,7 @@ where
     where
         W: io::Write,
     {
-        self.colorizer.push(Colorize::green);
+        self.colorizer.push(self.styler.value);
         self.formatter.begin_object_value(writer)
     }
 
@@ -288,7 +329,7 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
     return Ok(String::from_utf8_lossy(&writer).to_string());
 }
 
-pub fn write_colored_json<'a, W>(
+pub fn write_colored_json<W>(
     value: &Value,
     writer: &mut W,
 ) -> std::result::Result<(), serde_json::Error>
@@ -296,7 +337,5 @@ where
     W: io::Write,
 {
     let formatter = ColoredFormatter::new(PrettyFormatter::new());
-    let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
-
-    return value.serialize(&mut serializer);
+    formatter.write_colored_json(value, writer)
 }
