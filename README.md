@@ -1,6 +1,11 @@
-# Colored JSON output for Rust [![Travis (.org)](https://img.shields.io/travis/ctron/colored_json.svg)](https://travis-ci.org/ctron/colored_json)
+# Colored JSON output for Rust [![Travis (.org)](https://img.shields.io/travis/ctron/colored_json.svg)](https://travis-ci.org/ctron/colored_json) [![Crates.io](https://img.shields.io/crates/v/colored_json.svg)](https://crates.io/crates/colored_json)
 
-Add to your project:
+Also see:
+ * https: https://crates.io/crates/colored_json
+
+## Using
+
+Add it to your project:
 
 ~~~toml
 [dependencies]
@@ -24,4 +29,16 @@ pub fn display_json_value(value: &Value) -> std::result::Result<(), error::Error
 }
 ~~~
 
-Also see: https: https://crates.io/crates/colored_json
+Or directly write it out:
+
+~~~rust
+let mut out = stdout();
+
+{
+    let mut out = out.lock();
+    write_colored_json(value, & mut out)?
+}
+
+out.flush()?;
+~~~
+
