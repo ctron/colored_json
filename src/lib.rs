@@ -14,6 +14,39 @@ colored_json crate to output colored serde json with ANSI terminal escape codes
     }))?;
     println!("{}", s);
 ```
+
+With a custom color style:
+
+```rust
+    let f = ColoredFormatter::with_styler(
+        CompactFormatter {},
+        Styler {
+            key: Green.normal(),
+            value: Blue.bold(),
+            object: Style::new().bold(),
+        },
+    );
+
+    println!(
+        "\n{}",
+        f.clone().to_colored_json(&json!({
+          "name": "John Doe",
+          "age": 43,
+          "phones": [
+            "+44 1234567",
+            "+44 2345678"
+          ]
+        }))?
+    );
+
+    println!(
+        "{}",
+        f.to_colored_json(&json!({
+        "name":"John", "age":31, "city":"New York"
+    }))?
+    );
+```
+
 !*/
 
 /*******************************************************************************
@@ -338,6 +371,7 @@ where
         self.formatter.write_raw_fragment(writer, fragment)
     }
 }
+
 /// Serialize the given data structure as a pretty-color-printed String of JSON.
 ///
 /// # Errors
@@ -351,7 +385,6 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
 
     return Ok(String::from_utf8_lossy(&writer).to_string());
 }
-
 
 /// Serialize the given data structure as pretty-color-printed JSON into the IO
 /// stream.
