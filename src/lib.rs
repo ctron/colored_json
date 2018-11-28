@@ -38,7 +38,7 @@ impl Default for Styler {
         Styler {
             key: Style::new().fg(Blue).bold(),
             value: Style::new().fg(Green),
-            object: Style::new(),
+            object: Style::new().bold(),
         }
     }
 }
