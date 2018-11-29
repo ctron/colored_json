@@ -690,8 +690,7 @@ impl ColorMode {
     fn is_tty() -> bool {
         use libc;
 
-        let result = unsafe { libc::isatty(libc::STDOUT_FILENO as i32) != 0 };
-        result
+        unsafe { libc::isatty(libc::STDOUT_FILENO as i32) != 0 }
     }
 
     #[cfg(not(unix))]
