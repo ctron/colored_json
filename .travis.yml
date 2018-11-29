@@ -6,6 +6,11 @@ rust:
 - beta
 - nightly
 
+os:
+- linux
+- osx
+- windows
+
 script:
 - cargo build --verbose --all
 - cargo test -- --nocapture --test-threads 1
@@ -14,7 +19,3 @@ matrix:
   allow_failures:
   - rust: nightly
   fast_finish: true
-  include:
-    - os: linux
-    - os: osx
-    - os: windows
