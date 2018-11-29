@@ -142,7 +142,8 @@ pub use ansi_term::Colour;
 pub use ansi_term::Colour as Color;
 pub use ansi_term::Style;
 use serde::Serialize;
-use serde_json::ser::{Formatter, PrettyFormatter};
+use serde_json::ser::Formatter;
+pub use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use serde_json::value::Value;
 
 use std::io;
@@ -166,6 +167,7 @@ pub struct Styler {
     pub float_value: Style,
     pub bool_value: Style,
     pub nil_value: Style,
+    pub string_include_quotation: bool,
 }
 
 impl Default for Styler {
@@ -179,6 +181,7 @@ impl Default for Styler {
             float_value: Style::new(),
             bool_value: Style::new(),
             nil_value: Style::new(),
+            string_include_quotation: true,
         }
     }
 }
@@ -386,22 +389,30 @@ where
     where
         W: io::Write,
     {
-        let style = match self.in_object_key {
-            true => self.styler.key,
-            false => self.styler.string_value,
-        };
-        colored(writer, style, |w| self.formatter.begin_string(w))
+        if self.styler.string_include_quotation {
+            let style = match self.in_object_key {
+                true => self.styler.key,
+                false => self.styler.string_value,
+            };
+            colored(writer, style, |w| self.formatter.begin_string(w))
+        } else {
+            self.formatter.begin_string(writer)
+        }
     }
 
     fn end_string<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
     where
         W: io::Write,
     {
-        let style = match self.in_object_key {
-            true => self.styler.key,
-            false => self.styler.string_value,
-        };
-        colored(writer, style, |w| self.formatter.end_string(w))
+        if self.styler.string_include_quotation {
+            let style = match self.in_object_key {
+                true => self.styler.key,
+                false => self.styler.string_value,
+            };
+            colored(writer, style, |w| self.formatter.end_string(w))
+        } else {
+            self.formatter.end_string(writer)
+        }
     }
 
     fn write_string_fragment<W: ?Sized>(&mut self, writer: &mut W, fragment: &str) -> io::Result<()>
