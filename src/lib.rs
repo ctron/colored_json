@@ -44,7 +44,7 @@ With a custom color style:
     );
 
     println!(
-        "\n{}",
+        "{}",
         f.clone().to_colored_json(&json!({
           "name": "John Doe",
           "age": 43,
