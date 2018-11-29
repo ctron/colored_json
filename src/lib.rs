@@ -709,6 +709,13 @@ impl ColorMode {
         Self::is_tty(output)
     }
 
+    pub fn eval(self) -> Self {
+        match self.use_color() {
+            true => ColorMode::On,
+            false => ColorMode::Off,
+        }
+    }
+
     pub fn use_color(&self) -> bool {
         match self {
             ColorMode::On => true,
