@@ -133,6 +133,9 @@ extern crate ansi_term;
 extern crate serde;
 extern crate serde_json;
 
+#[cfg(unix)]
+extern crate libc;
+
 pub use ansi_term::Colour;
 pub use ansi_term::Colour as Color;
 pub use ansi_term::Style;
@@ -533,8 +536,55 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
 /// fail, or if `T` contains a map with non-string keys.
 pub fn write_colored_json<W>(value: &Value, writer: &mut W) -> serde_json::Result<()>
 where
-    W: io::Write,
+    W: io::Write
 {
-    let formatter = ColoredFormatter::new(PrettyFormatter::new());
-    formatter.write_colored_json(value, writer)
+    match use_color_default(None) {
+        true => {
+            let formatter = ColoredFormatter::new(PrettyFormatter::new());
+            let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
+            value.serialize(&mut serializer)
+        }
+        false => {
+            let formatter = PrettyFormatter::new();
+            let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
+            value.serialize(&mut serializer)
+        }
+    }
+
+}
+
+#[cfg(unix)]
+fn is_tty() -> bool {
+    use libc;
+
+    let result = unsafe { libc::isatty(libc::STDIN_FILENO as i32) } != 0;
+    result
+}
+
+#[cfg(not(unix))]
+fn is_tty() -> bool {
+    false
+}
+
+#[derive(Clone)]
+pub enum ColorMode {
+    On,
+    Off,
+    Auto,
+}
+
+fn default_color_mode() -> &'static ColorMode {
+    return &ColorMode::Auto;
+}
+
+pub fn use_color(color_mode: &ColorMode) -> bool {
+    match color_mode {
+        ColorMode::On => true,
+        ColorMode::Off => false,
+        ColorMode::Auto => is_tty(),
+    }
+}
+
+pub fn use_color_default(color_mode: Option<&ColorMode>) -> bool {
+    use_color(color_mode.unwrap_or(default_color_mode()))
 }
