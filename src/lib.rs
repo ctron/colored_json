@@ -39,8 +39,8 @@ With a custom color style:
         CompactFormatter {},
         Styler {
             key: Color::Green.normal(),
-            value: Color::Blue.bold(),
-            object: Style::new().bold(),
+            string_value: Color::Blue.bold(),
+            ..Default::default()
         },
     );
 
@@ -86,40 +86,50 @@ mod test;
 
 #[derive(Clone)]
 pub struct Styler {
+    pub object_brackets: Style,
+    pub array_brackets: Style,
     pub key: Style,
-    pub value: Style,
-    pub object: Style,
+    pub string_value: Style,
+    pub integer_value: Style,
+    pub float_value: Style,
+    pub bool_value: Style,
+    pub nil_value: Style,
 }
 
 impl Default for Styler {
     fn default() -> Styler {
         Styler {
+            object_brackets: Style::new().bold(),
+            array_brackets: Style::new().bold(),
             key: Style::new().fg(Color::Blue).bold(),
-            value: Style::new().fg(Color::Green),
-            object: Style::new().bold(),
+            string_value: Style::new().fg(Color::Green),
+            integer_value: Style::new(),
+            float_value: Style::new(),
+            bool_value: Style::new(),
+            nil_value: Style::new(),
         }
     }
 }
 
 #[derive(Clone)]
 pub struct ColoredFormatter<F>
-where
-    F: Formatter,
+    where
+        F: Formatter,
 {
     formatter: F,
     styler: Styler,
-    colorizer: Vec<Style>,
+    in_object_key: bool,
 }
 
 impl<F> ColoredFormatter<F>
-where
-    F: Formatter,
+    where
+        F: Formatter,
 {
     pub fn new(formatter: F) -> Self {
         return ColoredFormatter {
             formatter,
             styler: Styler::default(),
-            colorizer: Vec::new(),
+            in_object_key: false,
         };
     }
 
@@ -127,7 +137,7 @@ where
         return ColoredFormatter {
             formatter,
             styler: styler,
-            colorizer: Vec::new(),
+            in_object_key: false,
         };
     }
 
@@ -144,8 +154,8 @@ where
         value: &Value,
         writer: &mut W,
     ) -> std::result::Result<(), serde_json::Error>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
         let mut serializer = serde_json::Serializer::with_formatter(writer, self);
 
@@ -153,227 +163,262 @@ where
     }
 }
 
-fn colored<W: ?Sized, H>(writer: &mut W, colorizer: Option<Style>, mut handler: H) -> io::Result<()>
-where
-    W: io::Write,
-    H: FnMut(&mut Vec<u8>) -> io::Result<()>,
+fn colored<W: ?Sized, H>(writer: &mut W, style: Style, mut handler: H) -> io::Result<()>
+    where
+        W: io::Write,
+        H: FnMut(&mut Vec<u8>) -> io::Result<()>,
 {
     let mut w: Vec<u8> = Vec::with_capacity(128);
     handler(&mut w)?;
     let s = String::from_utf8_lossy(&w);
 
-    let out = match colorizer {
-        Some(c) => c.paint(s).to_string(),
-        None => s.to_string(),
-    };
-    Ok(writer.write_all(out.as_bytes())?)
+    Ok(writer.write_all(style.paint(s).to_string().as_bytes())?)
 }
 
 impl<F> Formatter for ColoredFormatter<F>
-where
-    F: Formatter,
+    where
+        F: Formatter,
 {
     fn write_null<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_null(writer)
+        colored(writer, self.styler.nil_value, |w| {
+            self.formatter.write_null(w)
+        })
     }
 
     fn write_bool<W: ?Sized>(&mut self, writer: &mut W, value: bool) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_bool(writer, value)
+        colored(writer, self.styler.bool_value, |w| {
+            self.formatter.write_bool(w, value)
+        })
     }
 
     fn write_i8<W: ?Sized>(&mut self, writer: &mut W, value: i8) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_i8(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_i8(w, value)
+        })
     }
 
     fn write_i16<W: ?Sized>(&mut self, writer: &mut W, value: i16) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_i16(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_i16(w, value)
+        })
     }
 
     fn write_i32<W: ?Sized>(&mut self, writer: &mut W, value: i32) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_i32(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_i32(w, value)
+        })
     }
 
     fn write_i64<W: ?Sized>(&mut self, writer: &mut W, value: i64) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_i64(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_i64(w, value)
+        })
     }
 
     fn write_u8<W: ?Sized>(&mut self, writer: &mut W, value: u8) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_u8(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_u8(w, value)
+        })
     }
 
     fn write_u16<W: ?Sized>(&mut self, writer: &mut W, value: u16) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_u16(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_u16(w, value)
+        })
     }
 
     fn write_u32<W: ?Sized>(&mut self, writer: &mut W, value: u32) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_u32(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_u32(w, value)
+        })
     }
 
     fn write_u64<W: ?Sized>(&mut self, writer: &mut W, value: u64) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_u64(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_u64(w, value)
+        })
     }
 
     fn write_f32<W: ?Sized>(&mut self, writer: &mut W, value: f32) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_f32(writer, value)
+        colored(writer, self.styler.float_value, |w| {
+            self.formatter.write_f32(w, value)
+        })
     }
 
     fn write_f64<W: ?Sized>(&mut self, writer: &mut W, value: f64) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_f64(writer, value)
+        colored(writer, self.styler.float_value, |w| {
+            self.formatter.write_f64(w, value)
+        })
     }
 
     fn write_number_str<W: ?Sized>(&mut self, writer: &mut W, value: &str) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.write_number_str(writer, value)
+        colored(writer, self.styler.integer_value, |w| {
+            self.formatter.write_number_str(w, value)
+        })
+    //        self.formatter.write_number_str(writer, value)
     }
 
     fn begin_string<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        colored(writer, self.colorizer.last().cloned(), |w| {
-            self.formatter.begin_string(w)
-        })
+        let style = match self.in_object_key {
+            true => self.styler.key,
+            false => self.styler.string_value,
+        };
+        colored(writer, style, |w| self.formatter.begin_string(w))
     }
 
     fn end_string<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        colored(writer, self.colorizer.last().cloned(), |w| {
-            self.formatter.end_string(w)
-        })
+        let style = match self.in_object_key {
+            true => self.styler.key,
+            false => self.styler.string_value,
+        };
+        colored(writer, style, |w| self.formatter.end_string(w))
     }
 
     fn write_string_fragment<W: ?Sized>(&mut self, writer: &mut W, fragment: &str) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        colored(writer, self.colorizer.last().cloned(), |w| {
+        let style = match self.in_object_key {
+            true => self.styler.key,
+            false => self.styler.string_value,
+        };
+        colored(writer, style, |w| {
             self.formatter.write_string_fragment(w, fragment)
         })
     }
 
     fn begin_array<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.begin_array(writer)
+        colored(writer, self.styler.array_brackets, |w| {
+            self.formatter.begin_array(w)
+        })
     }
 
     fn end_array<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.formatter.end_array(writer)
+        colored(writer, self.styler.array_brackets, |w| {
+            self.formatter.end_array(w)
+        })
     }
 
     fn begin_array_value<W: ?Sized>(&mut self, writer: &mut W, first: bool) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
         self.formatter.begin_array_value(writer, first)
     }
 
     fn end_array_value<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
         self.formatter.end_array_value(writer)
     }
 
     fn begin_object<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        colored(writer, Some(self.styler.object), |w| {
+        colored(writer, self.styler.object_brackets, |w| {
             self.formatter.begin_object(w)
         })
     }
 
     fn end_object<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        colored(writer, Some(self.styler.object), |w| {
+        colored(writer, self.styler.object_brackets, |w| {
             self.formatter.end_object(w)
         })
     }
 
     fn begin_object_key<W: ?Sized>(&mut self, writer: &mut W, first: bool) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.colorizer.push(self.styler.key);
+        self.in_object_key = true;
         self.formatter.begin_object_key(writer, first)
     }
 
     fn end_object_key<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
+        self.in_object_key = false;
         self.formatter.end_object_key(writer)?;
-        self.colorizer.pop();
         Ok(())
     }
 
     fn begin_object_value<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
-        self.colorizer.push(self.styler.value);
+        self.in_object_key = false;
         self.formatter.begin_object_value(writer)
     }
 
     fn end_object_value<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
+        self.in_object_key = false;
         self.formatter.end_object_value(writer)?;
-        self.colorizer.pop();
         Ok(())
     }
 
     fn write_raw_fragment<W: ?Sized>(&mut self, writer: &mut W, fragment: &str) -> io::Result<()>
-    where
-        W: io::Write,
+        where
+            W: io::Write,
     {
         self.formatter.write_raw_fragment(writer, fragment)
     }
@@ -401,8 +446,8 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
 /// Serialization can fail if `T`'s implementation of `Serialize` decides to
 /// fail, or if `T` contains a map with non-string keys.
 pub fn write_colored_json<W>(value: &Value, writer: &mut W) -> serde_json::Result<()>
-where
-    W: io::Write,
+    where
+        W: io::Write,
 {
     let formatter = ColoredFormatter::new(PrettyFormatter::new());
     formatter.write_colored_json(value, writer)

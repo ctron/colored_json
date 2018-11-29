@@ -1,4 +1,3 @@
-use ansi_term::Style;
 use serde_json::json;
 use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use std::error::Error;
@@ -49,19 +48,24 @@ fn test_styler() -> Result<(), Box<Error>> {
         PrettyFormatter::new(),
         Styler {
             key: Color::Green.normal(),
-            value: Colour::Blue.bold(),
-            object: Style::new().bold(),
+            string_value: Colour::Blue.bold(),
+            integer_value: Colour::Purple.bold(),
+            float_value: Colour::Purple.italic(),
+            object_brackets: Colour::Yellow.bold(),
+            array_brackets: Colour::Cyan.bold(),
+            ..Default::default()
         },
     );
 
     println!(
         "\n{}",
         f.clone().to_colored_json(&json!({
-          "name": "John Doe",
-          "age": 43,
-          "phones": [
-            "+44 1234567",
-            "+44 2345678"
+          "string": "string",
+          "integer": 4398798674962568u64,
+          "float": 3.1415926,
+          "array": [
+            "ele1",
+            "ele2"
           ]
         }))?
     );
@@ -82,8 +86,9 @@ fn test_styler_compact() -> Result<(), Box<Error>> {
         CompactFormatter {},
         Styler {
             key: Color::Green.normal(),
-            value: Colour::Blue.bold(),
-            object: Style::new().bold(),
+            string_value: Colour::Blue.bold(),
+            integer_value: Colour::Blue.bold(),
+            ..Default::default()
         },
     );
 
