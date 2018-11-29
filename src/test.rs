@@ -1,4 +1,3 @@
-use ansi_term::Colour::*;
 use ansi_term::Style;
 use serde_json::json;
 use serde_json::ser::{CompactFormatter, PrettyFormatter};
@@ -49,8 +48,8 @@ fn test_styler() -> Result<(), Box<Error>> {
     let f = ColoredFormatter::with_styler(
         PrettyFormatter::new(),
         Styler {
-            key: Green.normal(),
-            value: Blue.bold(),
+            key: Color::Green.normal(),
+            value: Colour::Blue.bold(),
             object: Style::new().bold(),
         },
     );
@@ -82,8 +81,8 @@ fn test_styler_compact() -> Result<(), Box<Error>> {
     let f = ColoredFormatter::with_styler(
         CompactFormatter {},
         Styler {
-            key: Green.normal(),
-            value: Blue.bold(),
+            key: Color::Green.normal(),
+            value: Colour::Blue.bold(),
             object: Style::new().bold(),
         },
     );

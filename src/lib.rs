@@ -31,14 +31,13 @@ With a custom color style:
     use serde_json::json;
     use serde_json::ser::CompactFormatter;
 
-    use colored_json::{ColoredFormatter, Styler, Style};
-    use colored_json::Colour::{Green, Blue};
+    use colored_json::{ColoredFormatter, Color, Styler, Style};
 
     let f = ColoredFormatter::with_styler(
         CompactFormatter {},
         Styler {
-            key: Green.normal(),
-            value: Blue.bold(),
+            key: Color::Green.normal(),
+            value: Color::Blue.bold(),
             object: Style::new().bold(),
         },
     );
@@ -70,6 +69,7 @@ extern crate serde;
 extern crate serde_json;
 
 pub use ansi_term::Colour;
+pub use ansi_term::Colour as Color;
 pub use ansi_term::Style;
 use serde::Serialize;
 use serde_json::ser::{Formatter, PrettyFormatter};
@@ -90,8 +90,8 @@ pub struct Styler {
 impl Default for Styler {
     fn default() -> Styler {
         Styler {
-            key: Style::new().fg(Colour::Blue).bold(),
-            value: Style::new().fg(Colour::Green),
+            key: Style::new().fg(Color::Blue).bold(),
+            value: Style::new().fg(Color::Green),
             object: Style::new().bold(),
         }
     }
