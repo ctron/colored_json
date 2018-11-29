@@ -22,7 +22,7 @@ For everything, which implements AsRef<str>
               "integer": 4398798674962568,
               "string": "string"
            }
-        "#.to_colored_json()?
+        "#.to_colored_json_auto()?
     );
     # Ok(())
     # }
@@ -34,7 +34,7 @@ or for serde_json::Value
     # extern crate serde_json;
     # extern crate colored_json;
     use serde_json::{json, Value};
-    use colored_json::to_colored_json;
+    use colored_json::to_colored_json_auto;
 
     # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
     let val : Value = json!({
@@ -45,7 +45,7 @@ or for serde_json::Value
         "+44 2345678"
       ]
     });
-    let s = to_colored_json(&val)?;
+    let s = to_colored_json_auto(&val)?;
     println!("{}", s);
     # Ok(())
     # }
@@ -109,7 +109,7 @@ With a custom color style:
 
     println!(
         "{}",
-        f.clone().to_colored_json(&json!({
+        f.clone().to_colored_json_auto(&json!({
           "name": "John Doe",
           "age": 43,
           "phones": [
@@ -121,7 +121,7 @@ With a custom color style:
 
     println!(
         "{}",
-        f.to_colored_json(&json!({
+        f.to_colored_json_auto(&json!({
             "name":"John", "age":31, "city":"New York"
         }))?
     );
@@ -212,15 +212,11 @@ where
         };
     }
 
-    pub fn to_colored_json(self, value: &Value) -> serde_json::Result<String> {
-        self.to_colored_json_with_mode(value, ColorMode::Auto)
+    pub fn to_colored_json_auto(self, value: &Value) -> serde_json::Result<String> {
+        self.to_colored_json(value, ColorMode::Auto)
     }
 
-    pub fn to_colored_json_with_mode(
-        self,
-        value: &Value,
-        mode: ColorMode,
-    ) -> serde_json::Result<String> {
+    pub fn to_colored_json(self, value: &Value, mode: ColorMode) -> serde_json::Result<String> {
         let mut writer: Vec<u8> = Vec::with_capacity(128);
 
         self.write_colored_json(value, &mut writer, mode)?;
@@ -513,8 +509,8 @@ where
 }
 
 pub trait ToColoredJson {
-    fn to_colored_json(&self) -> serde_json::Result<String>;
-    fn to_colored_json_with_mode(&self, mode: ColorMode) -> serde_json::Result<String>;
+    fn to_colored_json_auto(&self) -> serde_json::Result<String>;
+    fn to_colored_json(&self, mode: ColorMode) -> serde_json::Result<String>;
     fn to_colored_json_with_styler(
         &self,
         mode: ColorMode,
@@ -550,9 +546,9 @@ where
     ///
     /// Serialization can fail if `T`'s implementation of `Serialize` decides to
     /// fail, or if `T` contains a map with non-string keys.
-    fn to_colored_json(&self) -> serde_json::Result<String> {
+    fn to_colored_json_auto(&self) -> serde_json::Result<String> {
         let v: Value = serde_json::from_str(self.as_ref())?;
-        to_colored_json_with_mode(&v, ColorMode::Auto)
+        to_colored_json(&v, ColorMode::Auto)
     }
 
     /// Serialize the given data structure as a pretty-color-printed String of JSON.
@@ -561,9 +557,9 @@ where
     ///
     /// Serialization can fail if `T`'s implementation of `Serialize` decides to
     /// fail, or if `T` contains a map with non-string keys.
-    fn to_colored_json_with_mode(&self, mode: ColorMode) -> serde_json::Result<String> {
+    fn to_colored_json(&self, mode: ColorMode) -> serde_json::Result<String> {
         let v: Value = serde_json::from_str(self.as_ref())?;
-        to_colored_json_with_mode(&v, mode)
+        to_colored_json(&v, mode)
     }
 
     /// Serialize the given data structure as a pretty-color-printed String of JSON.
@@ -579,7 +575,7 @@ where
     ) -> serde_json::Result<String> {
         let f = ColoredFormatter::with_styler(PrettyFormatter::new(), styler);
         let v: Value = serde_json::from_str(self.as_ref())?;
-        f.to_colored_json_with_mode(&v, mode)
+        f.to_colored_json(&v, mode)
     }
 
     /// Serialize the given data structure as pretty-color-printed JSON into the IO
@@ -630,11 +626,11 @@ where
 ///
 /// Serialization can fail if `T`'s implementation of `Serialize` decides to
 /// fail, or if `T` contains a map with non-string keys.
-pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
-    to_colored_json_with_mode(value, ColorMode::Auto)
+pub fn to_colored_json_auto(value: &Value) -> serde_json::Result<String> {
+    to_colored_json(value, ColorMode::Auto)
 }
 
-pub fn to_colored_json_with_mode(value: &Value, mode: ColorMode) -> serde_json::Result<String> {
+pub fn to_colored_json(value: &Value, mode: ColorMode) -> serde_json::Result<String> {
     let mut writer: Vec<u8> = Vec::with_capacity(128);
 
     write_colored_json_with_mode(value, &mut writer, mode)?;
@@ -683,30 +679,42 @@ pub enum ColorMode {
     On,
     Off,
     Auto,
+    AutoErr,
+}
+
+pub enum Output {
+    StdOut,
+    StdErr,
 }
 
 impl ColorMode {
     #[cfg(unix)]
-    fn is_tty() -> bool {
+    fn is_tty(output: Output) -> bool {
         use libc;
 
-        unsafe { libc::isatty(libc::STDOUT_FILENO as i32) != 0 }
+        let fd = match output {
+            Output::StdOut => libc::STDOUT_FILENO,
+            Output::StdErr => libc::STDERR_FILENO,
+        } as i32;
+
+        unsafe { libc::isatty(fd) != 0 }
     }
 
     #[cfg(not(unix))]
-    fn is_tty() -> bool {
+    fn is_tty(output: Output) -> bool {
         false
     }
 
-    pub fn should_colorize() -> bool {
-        Self::is_tty()
+    pub fn should_colorize(output: Output) -> bool {
+        Self::is_tty(output)
     }
 
     pub fn use_color(&self) -> bool {
         match self {
             ColorMode::On => true,
             ColorMode::Off => false,
-            ColorMode::Auto => Self::should_colorize(),
+            ColorMode::Auto => Self::should_colorize(Output::StdOut),
+            ColorMode::AutoErr => Self::should_colorize(Output::StdErr),
         }
     }
 }

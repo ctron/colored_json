@@ -16,7 +16,7 @@ fn test_display_json_value() -> Result<(), Box<Error>> {
       ]
     });
 
-    let s = to_colored_json(&data)?;
+    let s = to_colored_json_auto(&data)?;
     println!("\n{}", s);
 
     return Ok(());
@@ -35,7 +35,25 @@ fn test_trait() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json()?
+    "#.to_colored_json_auto()?
+    );
+    Ok(())
+}
+
+#[test]
+fn test_trait_err() -> Result<(), Box<Error>> {
+    eprintln!(
+        "\n{}",
+        r#"{
+              "array": [
+                "ele1",
+                "ele2"
+              ],
+              "float": 3.1415926,
+              "integer": 4398798674962568,
+              "string": "string"
+           }
+    "#.to_colored_json(ColorMode::AutoErr)?
     );
     Ok(())
 }
@@ -53,7 +71,7 @@ fn test_trait_color_off() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json_with_mode(ColorMode::Off)?
+    "#.to_colored_json(ColorMode::Off)?
     );
     Ok(())
 }
@@ -153,7 +171,7 @@ fn test_styler() -> Result<(), Box<Error>> {
 
     println!(
         "\n{}",
-        f.clone().to_colored_json(&json!({
+        f.clone().to_colored_json_auto(&json!({
           "string": "string",
           "integer": 4398798674962568u64,
           "float": 3.1415926,
@@ -166,7 +184,7 @@ fn test_styler() -> Result<(), Box<Error>> {
 
     println!(
         "{}",
-        f.to_colored_json(&json!({
+        f.to_colored_json_auto(&json!({
         "name":"John", "age":31, "city":"New York"
     }))?
     );
@@ -191,7 +209,7 @@ fn test_styler_no_color() -> Result<(), Box<Error>> {
 
     println!(
         "\n{}",
-        f.clone().to_colored_json_with_mode(
+        f.clone().to_colored_json(
             &json!({
           "string": "string",
           "integer": 4398798674962568u64,
@@ -207,7 +225,7 @@ fn test_styler_no_color() -> Result<(), Box<Error>> {
 
     println!(
         "{}",
-        f.to_colored_json(&json!({
+        f.to_colored_json_auto(&json!({
         "name":"John", "age":31, "city":"New York"
     }))?
     );
@@ -229,7 +247,7 @@ fn test_styler_compact() -> Result<(), Box<Error>> {
 
     println!(
         "\n{}",
-        f.clone().to_colored_json(&json!({
+        f.clone().to_colored_json_auto(&json!({
           "name": "John Doe",
           "age": 43,
           "phones": [
@@ -241,7 +259,7 @@ fn test_styler_compact() -> Result<(), Box<Error>> {
 
     println!(
         "{}",
-        f.to_colored_json(&json!({
+        f.to_colored_json_auto(&json!({
         "name":"John", "age":31, "city":"New York"
     }))?
     );
