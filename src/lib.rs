@@ -3,7 +3,7 @@ colored_json crate to output colored serde json with ANSI terminal escape codes
 
 # Examples
 
-For everything, which implements AsRef<str>
+For everything, which implements `AsRef<str>`
 
 ```rust
     # extern crate serde_json;
