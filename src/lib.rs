@@ -4,13 +4,12 @@ colored_json crate to output colored serde json with ANSI terminal escape codes
 # Examples
 
 ```rust
-    extern crate serde_json;
-    extern crate colored_json;
-
+    # extern crate serde_json;
+    # extern crate colored_json;
     use serde_json::json;
-
     use colored_json::to_colored_json;
 
+    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
     let s = to_colored_json(&json!({
       "name": "John Doe",
       "age": 43,
@@ -18,21 +17,24 @@ colored_json crate to output colored serde json with ANSI terminal escape codes
         "+44 1234567",
         "+44 2345678"
       ]
-    })).unwrap();
+    }))?;
     println!("{}", s);
+    # Ok(())
+    # }
 ```
 
 With a custom color style:
 
 ```rust
-    extern crate serde_json;
-    extern crate colored_json;
+    # extern crate serde_json;
+    # extern crate colored_json;
 
     use serde_json::json;
     use serde_json::ser::CompactFormatter;
 
     use colored_json::{ColoredFormatter, Color, Styler, Style};
 
+    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
     let f = ColoredFormatter::with_styler(
         CompactFormatter {},
         Styler {
@@ -51,15 +53,17 @@ With a custom color style:
             "+44 1234567",
             "+44 2345678"
           ]
-        })).unwrap()
+        }))?
     );
 
     println!(
         "{}",
         f.to_colored_json(&json!({
-        "name":"John", "age":31, "city":"New York"
-    })).unwrap()
+            "name":"John", "age":31, "city":"New York"
+        }))?
     );
+    # Ok(())
+    # }
 ```
 
 !*/
@@ -396,10 +400,7 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
 ///
 /// Serialization can fail if `T`'s implementation of `Serialize` decides to
 /// fail, or if `T` contains a map with non-string keys.
-pub fn write_colored_json<W>(
-    value: &Value,
-    writer: &mut W,
-) -> serde_json::Result<()>
+pub fn write_colored_json<W>(value: &Value, writer: &mut W) -> serde_json::Result<()>
 where
     W: io::Write,
 {
