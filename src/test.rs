@@ -3,7 +3,6 @@ use ansi_term::Style;
 use serde_json::json;
 use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use std::error::Error;
-use std::io::stdout;
 use std::io::Write;
 use std::result::Result;
 use *;
@@ -26,7 +25,7 @@ fn test_display_json_value() -> Result<(), Box<Error>> {
 }
 
 #[test]
-fn test_stdout() -> Result<(), Box<Error>> {
+fn test_writer() -> Result<(), Box<Error>> {
     let data = json!({
       "name": "John Doe",
       "age": 43,
@@ -36,10 +35,12 @@ fn test_stdout() -> Result<(), Box<Error>> {
       ]
     });
 
-    let mut stdout = stdout();
-    stdout.write_all(b"\n")?;
-    write_colored_json(&data, &mut stdout)?;
-    stdout.write_all(b"\n")?;
+    let mut writer: Vec<u8> = Vec::with_capacity(128);
+    writer.write_all(b"\n")?;
+    write_colored_json(&data, &mut writer)?;
+    writer.write_all(b"\n")?;
+    let s = unsafe { String::from_utf8_unchecked(writer) };
+    println!("{}", s);
     return Ok(());
 }
 
