@@ -53,7 +53,7 @@ fn test_trait_err() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json(ColorMode::AutoErr)?
+    "#.to_colored_json(ColorMode::Auto(Output::StdErr))?
     );
     Ok(())
 }
@@ -90,7 +90,7 @@ fn test_trait_styler() -> Result<(), Box<Error>> {
               "string": "string"
            }
     "#.to_colored_json_with_styler(
-            ColorMode::Auto,
+            ColorMode::Auto(Output::StdOut),
             Styler {
                 key: Color::Green.normal(),
                 string_value: Colour::Blue.bold(),

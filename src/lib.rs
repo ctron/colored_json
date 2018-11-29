@@ -72,7 +72,7 @@ With a custom color style:
               "string": "string"
            }
     "#.to_colored_json_with_styler(
-        ColorMode::Auto,
+        ColorMode::Auto(Output::StdOut),
         Styler {
             key: Color::Green.normal(),
             string_value: Color::Blue.bold(),
@@ -152,6 +152,7 @@ mod test;
 
 pub mod prelude {
     pub use ColorMode;
+    pub use Output;
     pub use ToColoredJson;
 }
 
@@ -213,7 +214,7 @@ where
     }
 
     pub fn to_colored_json_auto(self, value: &Value) -> serde_json::Result<String> {
-        self.to_colored_json(value, ColorMode::Auto)
+        self.to_colored_json(value, ColorMode::Auto(Output::StdOut))
     }
 
     pub fn to_colored_json(self, value: &Value, mode: ColorMode) -> serde_json::Result<String> {
@@ -548,7 +549,7 @@ where
     /// fail, or if `T` contains a map with non-string keys.
     fn to_colored_json_auto(&self) -> serde_json::Result<String> {
         let v: Value = serde_json::from_str(self.as_ref())?;
-        to_colored_json(&v, ColorMode::Auto)
+        to_colored_json(&v, ColorMode::Auto(Output::StdOut))
     }
 
     /// Serialize the given data structure as a pretty-color-printed String of JSON.
@@ -590,7 +591,7 @@ where
         W: io::Write,
     {
         let value: Value = serde_json::from_str(self.as_ref())?;
-        write_colored_json_with_mode(&value, writer, ColorMode::Auto)
+        write_colored_json_with_mode(&value, writer, ColorMode::Auto(Output::StdOut))
     }
 
     fn write_colored_json_with_mode<W>(
@@ -627,7 +628,7 @@ where
 /// Serialization can fail if `T`'s implementation of `Serialize` decides to
 /// fail, or if `T` contains a map with non-string keys.
 pub fn to_colored_json_auto(value: &Value) -> serde_json::Result<String> {
-    to_colored_json(value, ColorMode::Auto)
+    to_colored_json(value, ColorMode::Auto(Output::StdOut))
 }
 
 pub fn to_colored_json(value: &Value, mode: ColorMode) -> serde_json::Result<String> {
@@ -649,7 +650,7 @@ pub fn write_colored_json<W>(value: &Value, writer: &mut W) -> serde_json::Resul
 where
     W: io::Write,
 {
-    write_colored_json_with_mode(value, writer, ColorMode::Auto)
+    write_colored_json_with_mode(value, writer, ColorMode::Auto(Output::StdOut))
 }
 
 pub fn write_colored_json_with_mode<W>(
@@ -678,10 +679,10 @@ where
 pub enum ColorMode {
     On,
     Off,
-    Auto,
-    AutoErr,
+    Auto(Output),
 }
 
+#[derive(Clone, Copy, PartialEq)]
 pub enum Output {
     StdOut,
     StdErr,
@@ -689,7 +690,7 @@ pub enum Output {
 
 impl ColorMode {
     #[cfg(unix)]
-    fn is_tty(output: Output) -> bool {
+    fn is_tty(output: &Output) -> bool {
         use libc;
 
         let fd = match output {
@@ -701,11 +702,11 @@ impl ColorMode {
     }
 
     #[cfg(not(unix))]
-    fn is_tty(output: Output) -> bool {
+    fn is_tty(output: &Output) -> bool {
         false
     }
 
-    pub fn should_colorize(output: Output) -> bool {
+    pub fn should_colorize(output: &Output) -> bool {
         Self::is_tty(output)
     }
 
@@ -720,14 +721,13 @@ impl ColorMode {
         match self {
             ColorMode::On => true,
             ColorMode::Off => false,
-            ColorMode::Auto => Self::should_colorize(Output::StdOut),
-            ColorMode::AutoErr => Self::should_colorize(Output::StdErr),
+            ColorMode::Auto(output) => Self::should_colorize(output),
         }
     }
 }
 
 impl Default for ColorMode {
     fn default() -> Self {
-        ColorMode::Auto
+        ColorMode::Auto(Output::StdOut)
     }
 }
