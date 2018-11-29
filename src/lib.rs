@@ -674,7 +674,7 @@ where
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ColorMode {
     On,
     Off,
