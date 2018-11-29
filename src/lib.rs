@@ -399,7 +399,7 @@ pub fn to_colored_json(value: &Value) -> serde_json::Result<String> {
 pub fn write_colored_json<W>(
     value: &Value,
     writer: &mut W,
-) -> std::result::Result<(), serde_json::Error>
+) -> serde_json::Result<()>
 where
     W: io::Write,
 {
