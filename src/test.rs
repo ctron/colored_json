@@ -23,6 +23,50 @@ fn test_display_json_value() -> Result<(), Box<Error>> {
 }
 
 #[test]
+fn test_trait() -> Result<(), Box<Error>> {
+    println!(
+        "\n{}",
+        r#"{
+              "array": [
+                "ele1",
+                "ele2"
+              ],
+              "float": 3.1415926,
+              "integer": 4398798674962568,
+              "string": "string"
+           }
+    "#.to_colored_json()?
+    );
+    Ok(())
+}
+
+#[test]
+fn test_trait_styler() -> Result<(), Box<Error>> {
+    println!(
+        "\n{}",
+        r#"{
+              "array": [
+                "ele1",
+                "ele2"
+              ],
+              "float": 3.1415926,
+              "integer": 4398798674962568,
+              "string": "string"
+           }
+    "#.to_colored_json_with_styler(Styler {
+            key: Color::Green.normal(),
+            string_value: Colour::Blue.bold(),
+            integer_value: Colour::Purple.bold(),
+            float_value: Colour::Purple.italic(),
+            object_brackets: Colour::Yellow.bold(),
+            array_brackets: Colour::Cyan.bold(),
+            ..Default::default()
+        })?
+    );
+    Ok(())
+}
+
+#[test]
 fn test_writer() -> Result<(), Box<Error>> {
     let data = json!({
       "name": "John Doe",
