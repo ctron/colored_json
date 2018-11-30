@@ -1,8 +1,5 @@
 # Colored JSON output for Rust [![Travis (.org)](https://img.shields.io/travis/ctron/colored_json.svg)](https://travis-ci.org/ctron/colored_json) [![Crates.io](https://img.shields.io/crates/v/colored_json.svg)](https://crates.io/crates/colored_json)
 
-Also see:
- * https: https://crates.io/crates/colored_json
-
 ![Screenshot](https://raw.githubusercontent.com/ctron/colored_json/master/Screenshot.png)
 
 ## Using
