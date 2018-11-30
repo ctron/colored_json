@@ -1,5 +1,4 @@
 use serde_json::json;
-use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use std::error::Error;
 use std::io::Write;
 use std::result::Result;
