@@ -24,6 +24,3 @@ ansi_term = "0.11"
 
 [target.'cfg(unix)'.dependencies]
 libc = { version = "0.2" }
-
-[badges]
-travis-ci = { repository = "ctron/colored_json" }
