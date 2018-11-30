@@ -712,6 +712,7 @@ pub enum ColorMode {
 pub enum Output {
     StdOut,
     StdErr,
+    #[cfg(unix)]
     RawFd(::std::os::unix::io::RawFd),
 }
 
