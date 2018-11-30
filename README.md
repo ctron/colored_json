@@ -3,6 +3,8 @@
 Also see:
  * https: https://crates.io/crates/colored_json
 
+![Screenshot](https://raw.githubusercontent.com/ctron/colored_json/master/Screenshot.png)
+
 ## Using
 
 Add it to your project:
