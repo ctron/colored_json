@@ -696,6 +696,7 @@ pub enum ColorMode {
 pub enum Output {
     StdOut,
     StdErr,
+    RawFd(::std::os::unix::io::RawFd),
 }
 
 impl ColorMode {
@@ -706,6 +707,7 @@ impl ColorMode {
         let fd = match output {
             Output::StdOut => libc::STDOUT_FILENO,
             Output::StdErr => libc::STDERR_FILENO,
+            Output::RawFd(f) => *f,
         } as i32;
 
         unsafe { libc::isatty(fd) != 0 }
