@@ -61,7 +61,7 @@ With a custom color style:
 
     # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
     println!(
-        "\n{}",
+        "{}",
         r#"{
               "array": [
                 "ele1",
@@ -93,9 +93,8 @@ With a custom color style:
     # extern crate colored_json;
 
     use serde_json::json;
-    use serde_json::ser::CompactFormatter;
 
-    use colored_json::{ColoredFormatter, Color, Styler, Style};
+    use colored_json::{ColoredFormatter, CompactFormatter, Color, Styler, Style};
 
     # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
     let f = ColoredFormatter::with_styler(
