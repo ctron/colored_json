@@ -1,6 +1,6 @@
 [package]
 name = "colored_json"
-version = "0.6.1"
+version = "0.6.2"
 authors = ["Jens Reimann <jreimann@redhat.com>", "Harald Hoyer <harald@redhat.com>"]
 
 description = "Colorize JSON, for printing it out on the command line"
@@ -8,7 +8,7 @@ description = "Colorize JSON, for printing it out on the command line"
 homepage = "https://github.com/ctron/colored_json"
 repository = "https://github.com/ctron/colored_json"
 documentation = "https://docs.rs/colored_json"
-readme = "README.md"
+readme = "CRATE-README.md"
 
 keywords = ["json", "colored", "coloured", "color", "colour"]
 categories = ["command-line-interface", "encoding", "visualization"]
@@ -24,3 +24,6 @@ ansi_term = "0.11"
 
 [target.'cfg(unix)'.dependencies]
 libc = { version = "0.2" }
+
+[badges]
+travis-ci = { repository = "ctron/colored_json" }
