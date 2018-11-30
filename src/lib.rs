@@ -72,7 +72,7 @@ With a custom color style:
               "string": "string"
            }
     "#.to_colored_json_with_styler(
-        ColorMode::Auto(Output::StdOut),
+        ColorMode::default().eval(),
         Styler {
             key: Color::Green.normal(),
             string_value: Color::Blue.bold(),
@@ -152,23 +152,33 @@ mod test;
 
 pub mod prelude {
     pub use ColorMode;
-    pub use Output;
     pub use ToColoredJson;
 }
 
+/// Styler lets you define the look of the colored json output
 #[derive(Clone)]
 pub struct Styler {
+    /// style of object brackets
     pub object_brackets: Style,
+    /// style of array brackets
     pub array_brackets: Style,
+    /// style of object
     pub key: Style,
+    /// style of string values
     pub string_value: Style,
+    /// style of integer values
     pub integer_value: Style,
+    /// style of float values
     pub float_value: Style,
+    /// style of bool values
     pub bool_value: Style,
+    /// style of the `nil` value
     pub nil_value: Style,
+    /// should the quotation get the style of the inner string/key?
     pub string_include_quotation: bool,
 }
 
+/// Default style resembling the `jq` style
 impl Default for Styler {
     fn default() -> Styler {
         Styler {
@@ -185,6 +195,7 @@ impl Default for Styler {
     }
 }
 
+/// `ColoredFormatter` decorates a `Formatter` with color defined in `Styler`
 #[derive(Clone)]
 pub struct ColoredFormatter<F>
 where
@@ -519,6 +530,7 @@ where
     }
 }
 
+/// Trait to add json coloring for all `AsRef<str>` like `String` and `&str`
 pub trait ToColoredJson {
     fn to_colored_json_auto(&self) -> serde_json::Result<String>;
     fn to_colored_json(&self, mode: ColorMode) -> serde_json::Result<String>;
@@ -685,6 +697,9 @@ where
     }
 }
 
+/**
+    ColorMode is a switch to enforce color mode, turn it off or auto-detect, if it should be used
+**/
 #[derive(Clone, Copy, PartialEq)]
 pub enum ColorMode {
     On,
@@ -692,6 +707,7 @@ pub enum ColorMode {
     Auto(Output),
 }
 
+/// Specify the output sink, which should be used for the auto detection
 #[derive(Clone, Copy, PartialEq)]
 pub enum Output {
     StdOut,
@@ -699,6 +715,28 @@ pub enum Output {
     RawFd(::std::os::unix::io::RawFd),
 }
 
+/** With `ColorMode` you can implement command line options like `--color=auto|on|off` easily.
+
+# Example:
+
+```rust
+# use colored_json::{ColorMode, Output};
+
+let option = "--color=auto";
+
+let color_mode = match option {
+    "--color=on" => ColorMode::Off,
+    "--color=off" => ColorMode::On,
+    _ => ColorMode::default().eval(),
+};
+
+assert!(match color_mode {
+    ColorMode::On | ColorMode::Off => true,
+    _ => false
+});
+```
+
+**/
 impl ColorMode {
     #[cfg(unix)]
     fn is_tty(output: &Output) -> bool {
@@ -718,10 +756,26 @@ impl ColorMode {
         false
     }
 
+    /// indicates, if the `output` is a capable of displaying colors
     pub fn should_colorize(output: &Output) -> bool {
         Self::is_tty(output)
     }
 
+    /** Returns ColorMode::On or ColorMode::Off
+
+    # Example:
+
+    ~~~rust
+    # use colored_json::{ColorMode, Output};
+    let on_off = ColorMode::default().eval();
+
+    assert!(match on_off {
+        ColorMode::On | ColorMode::Off => true,
+        _ => false
+    });
+    ~~~
+
+    **/
     pub fn eval(self) -> Self {
         match self.use_color() {
             true => ColorMode::On,
@@ -729,6 +783,29 @@ impl ColorMode {
         }
     }
 
+    /** Indicates if color should be used
+
+    # Example:
+
+    ```rust
+    # use colored_json::{ColorMode, Output};
+
+    if ColorMode::default().use_color() {
+        println!("We can use color! :-)");
+    } else {
+        println!("No color for you! :-(");
+    }
+
+    if ColorMode::Auto(Output::StdErr).use_color() {
+        println!("We can use color on stderr! :-)");
+    } else {
+        println!("No color for you on stderr! :-(");
+    }
+
+    assert_eq!(ColorMode::On.use_color(), true);
+    assert_eq!(ColorMode::Off.use_color(), false);
+    ```
+    **/
     pub fn use_color(&self) -> bool {
         match self {
             ColorMode::On => true,
@@ -739,6 +816,7 @@ impl ColorMode {
 }
 
 impl Default for ColorMode {
+    /// returns `ColorMode::Auto(Output::StdOut)`
     fn default() -> Self {
         ColorMode::Auto(Output::StdOut)
     }

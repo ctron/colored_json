@@ -89,7 +89,7 @@ fn test_trait_styler() -> Result<(), Box<Error>> {
               "string": "string"
            }
     "#.to_colored_json_with_styler(
-            ColorMode::Auto(Output::StdOut),
+            ColorMode::default().eval(),
             Styler {
                 key: Color::Green.normal(),
                 string_value: Colour::Blue.bold(),
