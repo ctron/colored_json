@@ -9,6 +9,7 @@ homepage = "https://github.com/ctron/colored_json"
 repository = "https://github.com/ctron/colored_json"
 documentation = "https://docs.rs/colored_json"
 readme = "CRATE-README.md"
+exclude = [ "Screenshot.png" ]
 
 keywords = ["json", "colored", "coloured", "color", "colour"]
 categories = ["command-line-interface", "encoding", "visualization"]
