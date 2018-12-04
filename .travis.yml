@@ -15,6 +15,7 @@ before_script:
 - cargo install --force cargo-audit
 
 script:
+- cargo update
 - cargo audit
 - cargo build --verbose --all
 - cargo test -- --nocapture --test-threads 1
