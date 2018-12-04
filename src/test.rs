@@ -6,6 +6,9 @@ use *;
 
 #[test]
 fn test_display_json_value() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     let data = json!({
       "name": "John Doe",
       "age": 43,
@@ -23,6 +26,9 @@ fn test_display_json_value() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_trait() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     println!(
         "\n{}",
         r#"{
@@ -41,6 +47,9 @@ fn test_trait() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_trait_err() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     eprintln!(
         "\n{}",
         r#"{
@@ -59,6 +68,9 @@ fn test_trait_err() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_trait_color_off() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     println!(
         "\n{}",
         r#"{
@@ -77,6 +89,9 @@ fn test_trait_color_off() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_trait_styler() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     println!(
         "\n{}",
         r#"{
@@ -106,6 +121,9 @@ fn test_trait_styler() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_trait_styler_color_off() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     println!(
         "\n{}",
         r#"{
@@ -135,6 +153,9 @@ fn test_trait_styler_color_off() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_writer() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     let data = json!({
       "name": "John Doe",
       "age": 43,
@@ -155,6 +176,9 @@ fn test_writer() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_styler() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     let f = ColoredFormatter::with_styler(
         PrettyFormatter::new(),
         Styler {
@@ -193,6 +217,9 @@ fn test_styler() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_styler_no_color() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     let f = ColoredFormatter::with_styler(
         PrettyFormatter::new(),
         Styler {
@@ -234,6 +261,9 @@ fn test_styler_no_color() -> Result<(), Box<Error>> {
 
 #[test]
 fn test_styler_compact() -> Result<(), Box<Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
     let f = ColoredFormatter::with_styler(
         CompactFormatter {},
         Styler {

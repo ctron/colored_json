@@ -1,6 +1,14 @@
 /*!
 colored_json crate to output colored serde json with ANSI terminal escape codes
 
+**Note for Windows 10 users:** On Windows 10, the application must enable ANSI support first:
+
+```rust
+# extern crate colored_json;
+#[cfg(windows)]
+let enabled = colored_json::enable_ansi_support();
+```
+
 # Examples
 
 For everything, which implements `AsRef<str>`
@@ -130,8 +138,11 @@ With a custom color style:
 !*/
 
 extern crate ansi_term;
+extern crate atty;
 extern crate serde;
 extern crate serde_json;
+
+use atty::Stream;
 
 #[cfg(unix)]
 extern crate libc;
@@ -139,6 +150,10 @@ extern crate libc;
 pub use ansi_term::Colour;
 pub use ansi_term::Colour as Color;
 pub use ansi_term::Style;
+
+#[cfg(windows)]
+pub use ansi_term::enable_ansi_support;
+
 use serde::Serialize;
 use serde_json::ser::Formatter;
 pub use serde_json::ser::{CompactFormatter, PrettyFormatter};
@@ -711,8 +726,6 @@ pub enum ColorMode {
 pub enum Output {
     StdOut,
     StdErr,
-    #[cfg(unix)]
-    RawFd(::std::os::unix::io::RawFd),
 }
 
 /** With `ColorMode` you can implement command line options like `--color=auto|on|off` easily.
@@ -738,22 +751,11 @@ assert!(match color_mode {
 
 **/
 impl ColorMode {
-    #[cfg(all(unix, not(target_arch = "wasm32")))]
     fn is_tty(output: &Output) -> bool {
-        use libc;
-
-        let fd = match output {
-            Output::StdOut => libc::STDOUT_FILENO,
-            Output::StdErr => libc::STDERR_FILENO,
-            Output::RawFd(f) => *f,
-        } as i32;
-
-        unsafe { libc::isatty(fd) != 0 }
-    }
-
-    #[cfg(not(all(unix, not(target_arch = "wasm32"))))]
-    fn is_tty(output: &Output) -> bool {
-        false
+        match output {
+            Output::StdOut => atty::is(Stream::Stdout),
+            Output::StdErr => atty::is(Stream::Stderr),
+        }
     }
 
     /// indicates, if the `output` is a capable of displaying colors
