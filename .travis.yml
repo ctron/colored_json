@@ -11,7 +11,11 @@ os:
 - osx
 - windows
 
+before_script:
+- cargo install --force cargo-audit
+
 script:
+- cargo audit
 - cargo build --verbose --all
 - cargo test -- --nocapture --test-threads 1
 
