@@ -127,7 +127,6 @@ With a custom color style:
     # Ok(())
     # }
 ```
-
 !*/
 
 extern crate ansi_term;
@@ -739,7 +738,7 @@ assert!(match color_mode {
 
 **/
 impl ColorMode {
-    #[cfg(unix)]
+    #[cfg(all(unix, not(target_arch = "wasm32")))]
     fn is_tty(output: &Output) -> bool {
         use libc;
 
@@ -752,7 +751,7 @@ impl ColorMode {
         unsafe { libc::isatty(fd) != 0 }
     }
 
-    #[cfg(not(unix))]
+    #[cfg(not(all(unix, not(target_arch = "wasm32"))))]
     fn is_tty(output: &Output) -> bool {
         false
     }
