@@ -11,7 +11,7 @@ Add it to your project:
 
 ~~~toml
 [dependencies]
-colored_json = "0.6"
+colored_json = "1"
 ~~~
 
 And then color your JSON output:
