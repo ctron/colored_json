@@ -18,7 +18,8 @@ fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-        "#.to_colored_json_auto()?
+        "#
+        .to_colored_json_auto()?
     );
     Ok(())
 }

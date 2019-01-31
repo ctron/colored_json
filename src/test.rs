@@ -40,7 +40,8 @@ fn test_trait() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json_auto()?
+    "#
+        .to_colored_json_auto()?
     );
     Ok(())
 }
@@ -61,7 +62,8 @@ fn test_trait_err() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json(ColorMode::Auto(Output::StdErr))?
+    "#
+        .to_colored_json(ColorMode::Auto(Output::StdErr))?
     );
     Ok(())
 }
@@ -82,7 +84,8 @@ fn test_trait_color_off() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json(ColorMode::Off)?
+    "#
+        .to_colored_json(ColorMode::Off)?
     );
     Ok(())
 }
@@ -103,7 +106,8 @@ fn test_trait_styler() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json_with_styler(
+    "#
+        .to_colored_json_with_styler(
             ColorMode::default().eval(),
             Styler {
                 key: Color::Green.normal(),
@@ -135,7 +139,8 @@ fn test_trait_styler_color_off() -> Result<(), Box<Error>> {
               "integer": 4398798674962568,
               "string": "string"
            }
-    "#.to_colored_json_with_styler(
+    "#
+        .to_colored_json_with_styler(
             ColorMode::Off,
             Styler {
                 key: Color::Green.normal(),
@@ -208,8 +213,8 @@ fn test_styler() -> Result<(), Box<Error>> {
     println!(
         "{}",
         f.to_colored_json_auto(&json!({
-        "name":"John", "age":31, "city":"New York"
-    }))?
+            "name":"John", "age":31, "city":"New York"
+        }))?
     );
 
     return Ok(());
@@ -237,14 +242,14 @@ fn test_styler_no_color() -> Result<(), Box<Error>> {
         "\n{}",
         f.clone().to_colored_json(
             &json!({
-          "string": "string",
-          "integer": 4398798674962568u64,
-          "float": 3.1415926,
-          "array": [
-            "ele1",
-            "ele2"
-          ]
-        }),
+              "string": "string",
+              "integer": 4398798674962568u64,
+              "float": 3.1415926,
+              "array": [
+                "ele1",
+                "ele2"
+              ]
+            }),
             ColorMode::Off,
         )?
     );
@@ -252,8 +257,8 @@ fn test_styler_no_color() -> Result<(), Box<Error>> {
     println!(
         "{}",
         f.to_colored_json_auto(&json!({
-        "name":"John", "age":31, "city":"New York"
-    }))?
+            "name":"John", "age":31, "city":"New York"
+        }))?
     );
 
     return Ok(());
@@ -289,8 +294,8 @@ fn test_styler_compact() -> Result<(), Box<Error>> {
     println!(
         "{}",
         f.to_colored_json_auto(&json!({
-        "name":"John", "age":31, "city":"New York"
-    }))?
+            "name":"John", "age":31, "city":"New York"
+        }))?
     );
 
     return Ok(());

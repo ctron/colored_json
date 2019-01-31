@@ -1,165 +1,159 @@
-/*!
-colored_json crate to output colored serde json with ANSI terminal escape codes
-
-**Note for Windows 10 users:** On Windows 10, the application must enable ANSI support first:
-
-```rust
-# extern crate colored_json;
-#[cfg(windows)]
-let enabled = colored_json::enable_ansi_support();
-```
-
-# Examples
-
-For everything, which implements `AsRef<str>`
-
-```rust
-    # extern crate serde_json;
-    extern crate colored_json;
-    use colored_json::prelude::*;
-
-    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
-    println!(
-        "{}",
-        r#"{
-              "array": [
-                "ele1",
-                "ele2"
-              ],
-              "float": 3.1415926,
-              "integer": 4398798674962568,
-              "string": "string"
-           }
-        "#.to_colored_json_auto()?
-    );
-    # Ok(())
-    # }
-```
-
-or for serde_json::Value
-
-```rust
-    # extern crate serde_json;
-    # extern crate colored_json;
-    use serde_json::{json, Value};
-    use colored_json::to_colored_json_auto;
-
-    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
-    let val : Value = json!({
-      "name": "John Doe",
-      "age": 43,
-      "phones": [
-        "+44 1234567",
-        "+44 2345678"
-      ]
-    });
-    let s = to_colored_json_auto(&val)?;
-    println!("{}", s);
-    # Ok(())
-    # }
-```
-
-With a custom color style:
-
-```rust
-    # extern crate serde_json;
-    extern crate colored_json;
-    use colored_json::prelude::*;
-    use colored_json::{Color, Styler};
-
-    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
-    println!(
-        "{}",
-        r#"{
-              "array": [
-                "ele1",
-                "ele2"
-              ],
-              "float": 3.1415926,
-              "integer": 4398798674962568,
-              "string": "string"
-           }
-    "#.to_colored_json_with_styler(
-        ColorMode::default().eval(),
-        Styler {
-            key: Color::Green.normal(),
-            string_value: Color::Blue.bold(),
-            integer_value: Color::Purple.bold(),
-            float_value: Color::Purple.italic(),
-            object_brackets: Color::Yellow.bold(),
-            array_brackets: Color::Cyan.bold(),
-            ..Default::default()
-        })?
-    );
-    Ok(())
-    # }
-```
-
-
-```rust
-    # extern crate serde_json;
-    # extern crate colored_json;
-
-    use serde_json::json;
-
-    use colored_json::{ColoredFormatter, CompactFormatter, Color, Styler, Style};
-
-    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
-    let f = ColoredFormatter::with_styler(
-        CompactFormatter {},
-        Styler {
-            key: Color::Green.normal(),
-            string_value: Color::Blue.bold(),
-            ..Default::default()
-        },
-    );
-
-    println!(
-        "{}",
-        f.clone().to_colored_json_auto(&json!({
-          "name": "John Doe",
-          "age": 43,
-          "phones": [
-            "+44 1234567",
-            "+44 2345678"
-          ]
-        }))?
-    );
-
-    println!(
-        "{}",
-        f.to_colored_json_auto(&json!({
-            "name":"John", "age":31, "city":"New York"
-        }))?
-    );
-    # Ok(())
-    # }
-```
-!*/
+//!colored_json crate to output colored serde json with ANSI terminal escape codes
+//!
+//!**Note for Windows 10 users:** On Windows 10, the application must enable ANSI support first:
+//!
+//!```rust
+//!# extern crate colored_json;
+//!#[cfg(windows)]
+//!let enabled = colored_json::enable_ansi_support();
+//!```
+//!
+//!# Examples
+//!
+//!For everything, which implements `AsRef<str>`
+//!
+//!```rust
+//!    # extern crate serde_json;
+//!    extern crate colored_json;
+//!    use colored_json::prelude::*;
+//!
+//!    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
+//!    println!(
+//!        "{}",
+//!        r#"{
+//!              "array": [
+//!                "ele1",
+//!                "ele2"
+//!              ],
+//!              "float": 3.1415926,
+//!              "integer": 4398798674962568,
+//!              "string": "string"
+//!           }
+//!        "#.to_colored_json_auto()?
+//!    );
+//!    # Ok(())
+//!    # }
+//!```
+//!
+//!or for serde_json::Value
+//!
+//!```rust
+//!    # extern crate serde_json;
+//!    # extern crate colored_json;
+//!    use serde_json::{json, Value};
+//!    use colored_json::to_colored_json_auto;
+//!
+//!    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
+//!    let val : Value = json!({
+//!      "name": "John Doe",
+//!      "age": 43,
+//!      "phones": [
+//!        "+44 1234567",
+//!        "+44 2345678"
+//!      ]
+//!    });
+//!    let s = to_colored_json_auto(&val)?;
+//!    println!("{}", s);
+//!    # Ok(())
+//!    # }
+//!```
+//!
+//!With a custom color style:
+//!
+//!```rust
+//!    # extern crate serde_json;
+//!    extern crate colored_json;
+//!    use colored_json::prelude::*;
+//!    use colored_json::{Color, Styler};
+//!
+//!    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
+//!    println!(
+//!        "{}",
+//!        r#"{
+//!              "array": [
+//!                "ele1",
+//!                "ele2"
+//!              ],
+//!              "float": 3.1415926,
+//!              "integer": 4398798674962568,
+//!              "string": "string"
+//!           }
+//!    "#.to_colored_json_with_styler(
+//!        ColorMode::default().eval(),
+//!        Styler {
+//!            key: Color::Green.normal(),
+//!            string_value: Color::Blue.bold(),
+//!            integer_value: Color::Purple.bold(),
+//!            float_value: Color::Purple.italic(),
+//!            object_brackets: Color::Yellow.bold(),
+//!            array_brackets: Color::Cyan.bold(),
+//!            ..Default::default()
+//!        })?
+//!    );
+//!    Ok(())
+//!    # }
+//!```
+//!
+//!
+//!```rust
+//!    # extern crate serde_json;
+//!    # extern crate colored_json;
+//!
+//!    use serde_json::json;
+//!
+//!    use colored_json::{ColoredFormatter, CompactFormatter, Color, Styler, Style};
+//!
+//!    # fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
+//!    let f = ColoredFormatter::with_styler(
+//!        CompactFormatter {},
+//!        Styler {
+//!            key: Color::Green.normal(),
+//!            string_value: Color::Blue.bold(),
+//!            ..Default::default()
+//!        },
+//!    );
+//!
+//!    println!(
+//!        "{}",
+//!        f.clone().to_colored_json_auto(&json!({
+//!          "name": "John Doe",
+//!          "age": 43,
+//!          "phones": [
+//!            "+44 1234567",
+//!            "+44 2345678"
+//!          ]
+//!        }))?
+//!    );
+//!
+//!    println!(
+//!        "{}",
+//!        f.to_colored_json_auto(&json!({
+//!            "name":"John", "age":31, "city":"New York"
+//!        }))?
+//!    );
+//!    # Ok(())
+//!    # }
+//!```
 
 extern crate ansi_term;
 extern crate atty;
+#[cfg(unix)]
+extern crate libc;
 extern crate serde;
 extern crate serde_json;
 
-use atty::Stream;
-
-#[cfg(unix)]
-extern crate libc;
-
-pub use ansi_term::Colour;
-pub use ansi_term::Colour as Color;
-pub use ansi_term::Style;
+use std::io;
 
 #[cfg(windows)]
 pub use ansi_term::enable_ansi_support;
-
+pub use ansi_term::Colour;
+pub use ansi_term::Colour as Color;
+pub use ansi_term::Style;
+use atty::Stream;
 use serde::Serialize;
 use serde_json::ser::Formatter;
 pub use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use serde_json::value::Value;
-
-use std::io;
 
 #[cfg(test)]
 mod test;
@@ -225,31 +219,33 @@ where
     F: Formatter,
 {
     pub fn new(formatter: F) -> Self {
-        return ColoredFormatter {
+        ColoredFormatter {
             formatter,
             styler: Styler::default(),
             in_object_key: false,
-        };
+        }
     }
 
     pub fn with_styler(formatter: F, styler: Styler) -> Self {
-        return ColoredFormatter {
+        ColoredFormatter {
             formatter,
-            styler: styler,
+            styler,
             in_object_key: false,
-        };
+        }
     }
 
+    #[allow(clippy::wrong_self_convention)]
     pub fn to_colored_json_auto(self, value: &Value) -> serde_json::Result<String> {
         self.to_colored_json(value, ColorMode::Auto(Output::StdOut))
     }
 
+    #[allow(clippy::wrong_self_convention)]
     pub fn to_colored_json(self, value: &Value, mode: ColorMode) -> serde_json::Result<String> {
         let mut writer: Vec<u8> = Vec::with_capacity(128);
 
         self.write_colored_json(value, &mut writer, mode)?;
 
-        return Ok(String::from_utf8_lossy(&writer).to_string());
+        Ok(String::from_utf8_lossy(&writer).to_string())
     }
 
     pub fn write_colored_json<W>(
@@ -261,16 +257,12 @@ where
     where
         W: io::Write,
     {
-        match mode.use_color() {
-            true => {
-                let mut serializer = serde_json::Serializer::with_formatter(writer, self);
-
-                return value.serialize(&mut serializer);
-            }
-            false => {
-                let mut serializer = serde_json::Serializer::with_formatter(writer, self.formatter);
-                return value.serialize(&mut serializer);
-            }
+        if mode.use_color() {
+            let mut serializer = serde_json::Serializer::with_formatter(writer, self);
+            value.serialize(&mut serializer)
+        } else {
+            let mut serializer = serde_json::Serializer::with_formatter(writer, self.formatter);
+            value.serialize(&mut serializer)
         }
     }
 }
@@ -284,7 +276,8 @@ where
     handler(&mut w)?;
     let s = String::from_utf8_lossy(&w);
 
-    Ok(writer.write_all(style.paint(s).to_string().as_bytes())?)
+    writer.write_all(style.paint(s).to_string().as_bytes())?;
+    Ok(())
 }
 
 impl<F> Formatter for ColoredFormatter<F>
@@ -414,9 +407,10 @@ where
         W: io::Write,
     {
         if self.styler.string_include_quotation {
-            let style = match self.in_object_key {
-                true => self.styler.key,
-                false => self.styler.string_value,
+            let style = if self.in_object_key {
+                self.styler.key
+            } else {
+                self.styler.string_value
             };
             colored(writer, style, |w| self.formatter.begin_string(w))
         } else {
@@ -429,9 +423,10 @@ where
         W: io::Write,
     {
         if self.styler.string_include_quotation {
-            let style = match self.in_object_key {
-                true => self.styler.key,
-                false => self.styler.string_value,
+            let style = if self.in_object_key {
+                self.styler.key
+            } else {
+                self.styler.string_value
             };
             colored(writer, style, |w| self.formatter.end_string(w))
         } else {
@@ -443,9 +438,10 @@ where
     where
         W: io::Write,
     {
-        let style = match self.in_object_key {
-            true => self.styler.key,
-            false => self.styler.string_value,
+        let style = if self.in_object_key {
+            self.styler.key
+        } else {
+            self.styler.string_value
         };
         colored(writer, style, |w| {
             self.formatter.write_string_fragment(w, fragment)
@@ -672,7 +668,7 @@ pub fn to_colored_json(value: &Value, mode: ColorMode) -> serde_json::Result<Str
 
     write_colored_json_with_mode(value, &mut writer, mode)?;
 
-    return Ok(String::from_utf8_lossy(&writer).to_string());
+    Ok(String::from_utf8_lossy(&writer).to_string())
 }
 
 /// Serialize the given data structure as pretty-color-printed JSON into the IO
@@ -697,17 +693,14 @@ pub fn write_colored_json_with_mode<W>(
 where
     W: io::Write,
 {
-    match mode.use_color() {
-        true => {
-            let formatter = ColoredFormatter::new(PrettyFormatter::new());
-            let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
-            value.serialize(&mut serializer)
-        }
-        false => {
-            let formatter = PrettyFormatter::new();
-            let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
-            value.serialize(&mut serializer)
-        }
+    if mode.use_color() {
+        let formatter = ColoredFormatter::new(PrettyFormatter::new());
+        let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
+        value.serialize(&mut serializer)
+    } else {
+        let formatter = PrettyFormatter::new();
+        let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
+        value.serialize(&mut serializer)
     }
 }
 
@@ -728,28 +721,26 @@ pub enum Output {
     StdErr,
 }
 
-/** With `ColorMode` you can implement command line options like `--color=auto|on|off` easily.
-
-# Example:
-
-```rust
-# use colored_json::{ColorMode, Output};
-
-let option = "--color=auto";
-
-let color_mode = match option {
-    "--color=on" => ColorMode::Off,
-    "--color=off" => ColorMode::On,
-    _ => ColorMode::default().eval(),
-};
-
-assert!(match color_mode {
-    ColorMode::On | ColorMode::Off => true,
-    _ => false
-});
-```
-
-**/
+/// With `ColorMode` you can implement command line options like `--color=auto|on|off` easily.
+///
+/// # Example:
+///
+/// ```rust
+/// # use colored_json::{ColorMode, Output};
+///
+/// let option = "--color=auto";
+///
+/// let color_mode = match option {
+///     "--color=on" => ColorMode::Off,
+///     "--color=off" => ColorMode::On,
+///     _ => ColorMode::default().eval(),
+/// };
+///
+/// assert!(match color_mode {
+///     ColorMode::On | ColorMode::Off => true,
+///     _ => false
+/// });
+/// ```
 impl ColorMode {
     fn is_tty(output: Output) -> bool {
         match output {
@@ -763,25 +754,24 @@ impl ColorMode {
         Self::is_tty(output)
     }
 
-    /** Returns ColorMode::On or ColorMode::Off
-
-    # Example:
-
-    ~~~rust
-    # use colored_json::{ColorMode, Output};
-    let on_off = ColorMode::default().eval();
-
-    assert!(match on_off {
-        ColorMode::On | ColorMode::Off => true,
-        _ => false
-    });
-    ~~~
-
-    **/
+    /// Returns ColorMode::On or ColorMode::Off
+    ///
+    /// # Example:
+    ///
+    /// ~~~rust
+    /// # use colored_json::{ColorMode, Output};
+    /// let on_off = ColorMode::default().eval();
+    ///
+    /// assert!(match on_off {
+    ///     ColorMode::On | ColorMode::Off => true,
+    ///     _ => false
+    /// });
+    /// ~~~
     pub fn eval(self) -> Self {
-        match self.use_color() {
-            true => ColorMode::On,
-            false => ColorMode::Off,
+        if self.use_color() {
+            ColorMode::On
+        } else {
+            ColorMode::Off
         }
     }
 
