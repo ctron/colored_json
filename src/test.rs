@@ -2,7 +2,7 @@ use serde_json::json;
 use std::error::Error;
 use std::io::Write;
 use std::result::Result;
-use *;
+use crate::*;
 
 #[test]
 fn test_display_json_value() -> Result<(), Box<Error>> {

@@ -159,8 +159,8 @@ use serde_json::value::Value;
 mod test;
 
 pub mod prelude {
-    pub use ColorMode;
-    pub use ToColoredJson;
+    pub use crate::ColorMode;
+    pub use crate::ToColoredJson;
 }
 
 /// Styler lets you define the look of the colored json output
