@@ -170,7 +170,7 @@ pub mod prelude {
 }
 
 /// Styler lets you define the look of the colored json output
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Styler {
     /// style of object brackets
     pub object_brackets: Style,
