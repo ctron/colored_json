@@ -751,7 +751,7 @@ assert!(match color_mode {
 
 **/
 impl ColorMode {
-    fn is_tty(output: &Output) -> bool {
+    fn is_tty(output: Output) -> bool {
         match output {
             Output::StdOut => atty::is(Stream::Stdout),
             Output::StdErr => atty::is(Stream::Stderr),
@@ -759,7 +759,7 @@ impl ColorMode {
     }
 
     /// indicates, if the `output` is a capable of displaying colors
-    pub fn should_colorize(output: &Output) -> bool {
+    pub fn should_colorize(output: Output) -> bool {
         Self::is_tty(output)
     }
 
@@ -785,30 +785,29 @@ impl ColorMode {
         }
     }
 
-    /** Indicates if color should be used
-
-    # Example:
-
-    ```rust
-    # use colored_json::{ColorMode, Output};
-
-    if ColorMode::default().use_color() {
-        println!("We can use color! :-)");
-    } else {
-        println!("No color for you! :-(");
-    }
-
-    if ColorMode::Auto(Output::StdErr).use_color() {
-        println!("We can use color on stderr! :-)");
-    } else {
-        println!("No color for you on stderr! :-(");
-    }
-
-    assert_eq!(ColorMode::On.use_color(), true);
-    assert_eq!(ColorMode::Off.use_color(), false);
-    ```
-    **/
-    pub fn use_color(&self) -> bool {
+    /// Indicates if color should be used
+    //
+    /// # Example:
+    //
+    /// ```rust
+    /// # use colored_json::{ColorMode, Output};
+    //
+    /// if ColorMode::default().use_color() {
+    ///     println!("We can use color! :-)");
+    /// } else {
+    ///     println!("No color for you! :-(");
+    /// }
+    //
+    /// if ColorMode::Auto(Output::StdErr).use_color() {
+    ///     println!("We can use color on stderr! :-)");
+    /// } else {
+    ///     println!("No color for you on stderr! :-(");
+    /// }
+    //
+    /// assert_eq!(ColorMode::On.use_color(), true);
+    /// assert_eq!(ColorMode::Off.use_color(), false);
+    /// ```
+    pub fn use_color(self) -> bool {
         match self {
             ColorMode::On => true,
             ColorMode::Off => false,
