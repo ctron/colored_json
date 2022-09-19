@@ -1,9 +1,8 @@
 //!colored_json crate to output colored serde json with ANSI terminal escape codes
 //!
-//!**Note for Windows 10 users:** On Windows 10, the application must enable ANSI support first:
+//!**Note for Windows 10+ users:** On Windows 10+, the application must enable ANSI support first:
 //!
 //!```rust
-//!# extern crate colored_json;
 //!#[cfg(windows)]
 //!let enabled = colored_json::enable_ansi_support();
 //!```
@@ -135,25 +134,36 @@
 //!    # }
 //!```
 
-extern crate ansi_term;
-extern crate atty;
-#[cfg(unix)]
-extern crate libc;
-extern crate serde;
-extern crate serde_json;
-
-use std::io;
-
-#[cfg(windows)]
-pub use ansi_term::enable_ansi_support;
-pub use ansi_term::Colour;
-pub use ansi_term::Colour as Color;
-pub use ansi_term::Style;
 use atty::Stream;
 use serde::Serialize;
 use serde_json::ser::Formatter;
 pub use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use serde_json::value::Value;
+use std::io;
+
+#[cfg(windows)]
+pub use yansi::enable_ascii_colors;
+pub use yansi::{Color, Style};
+
+/// Enable ANSI support (on Windows).
+///
+/// On Windows, the terminal needs to be put into an "ANSI mode" so that it will render colors.
+/// This is not enabled by default, but this function will enable it for you.
+///
+/// The function is also available on other platforms, but is a no-op in this case. So you can call
+/// this function in any case.
+///
+/// You can also directly call the function [`yansi::enable_ansi_colors`], or use any other means
+/// of enabling the virtual ANSI console in Windows. Maybe some other part of your application
+/// already does that.
+#[inline]
+pub fn enable_ansi_support() -> Result<(), ()> {
+    #[cfg(windows)]
+    if !yansi::enable_ascii_colors() {
+        return Err(());
+    }
+    Ok(())
+}
 
 #[cfg(test)]
 mod test;
@@ -190,14 +200,14 @@ pub struct Styler {
 impl Default for Styler {
     fn default() -> Styler {
         Styler {
-            object_brackets: Style::new().bold(),
-            array_brackets: Style::new().bold(),
-            key: Style::new().fg(Color::Blue).bold(),
-            string_value: Style::new().fg(Color::Green),
-            integer_value: Style::new(),
-            float_value: Style::new(),
-            bool_value: Style::new(),
-            nil_value: Style::new(),
+            object_brackets: Style::default().bold(),
+            array_brackets: Style::default().bold(),
+            key: Style::default().fg(Color::Blue).bold(),
+            string_value: Style::default().fg(Color::Green),
+            integer_value: Style::default(),
+            float_value: Style::default(),
+            bool_value: Style::default(),
+            nil_value: Style::default(),
             string_include_quotation: true,
         }
     }
