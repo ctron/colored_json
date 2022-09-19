@@ -110,12 +110,12 @@ fn test_trait_styler() -> Result<(), Box<dyn Error>> {
         .to_colored_json_with_styler(
             ColorMode::default().eval(),
             Styler {
-                key: Color::Green.normal(),
-                string_value: Colour::Blue.bold(),
-                integer_value: Colour::Purple.bold(),
-                float_value: Colour::Purple.italic(),
-                object_brackets: Colour::Yellow.bold(),
-                array_brackets: Colour::Cyan.bold(),
+                key: Style::new(Color::Green),
+                string_value: Style::new(Color::Blue).bold(),
+                integer_value: Style::new(Color::Magenta).bold(),
+                float_value: Style::new(Color::Magenta).italic(),
+                object_brackets: Style::new(Color::Yellow).bold(),
+                array_brackets: Style::new(Color::Cyan).bold(),
                 ..Default::default()
             },
         )?
@@ -143,12 +143,12 @@ fn test_trait_styler_color_off() -> Result<(), Box<dyn Error>> {
         .to_colored_json_with_styler(
             ColorMode::Off,
             Styler {
-                key: Color::Green.normal(),
-                string_value: Colour::Blue.bold(),
-                integer_value: Colour::Purple.bold(),
-                float_value: Colour::Purple.italic(),
-                object_brackets: Colour::Yellow.bold(),
-                array_brackets: Colour::Cyan.bold(),
+                key: Style::new(Color::Green),
+                string_value: Style::new(Color::Blue).bold(),
+                integer_value: Style::new(Color::Magenta).bold(),
+                float_value: Style::new(Color::Magenta).italic(),
+                object_brackets: Style::new(Color::Yellow).bold(),
+                array_brackets: Style::new(Color::Cyan).bold(),
                 ..Default::default()
             },
         )?
@@ -187,12 +187,12 @@ fn test_styler() -> Result<(), Box<dyn Error>> {
     let f = ColoredFormatter::with_styler(
         PrettyFormatter::new(),
         Styler {
-            key: Color::Green.normal(),
-            string_value: Colour::Blue.bold(),
-            integer_value: Colour::Purple.bold(),
-            float_value: Colour::Purple.italic(),
-            object_brackets: Colour::Yellow.bold(),
-            array_brackets: Colour::Cyan.bold(),
+            key: Style::new(Color::Green),
+            string_value: Style::new(Color::Blue).bold(),
+            integer_value: Style::new(Color::Magenta).bold(),
+            float_value: Style::new(Color::Magenta).italic(),
+            object_brackets: Style::new(Color::Yellow).bold(),
+            array_brackets: Style::new(Color::Cyan).bold(),
             ..Default::default()
         },
     );
@@ -228,12 +228,12 @@ fn test_styler_no_color() -> Result<(), Box<dyn Error>> {
     let f = ColoredFormatter::with_styler(
         PrettyFormatter::new(),
         Styler {
-            key: Color::Green.normal(),
-            string_value: Colour::Blue.bold(),
-            integer_value: Colour::Purple.bold(),
-            float_value: Colour::Purple.italic(),
-            object_brackets: Colour::Yellow.bold(),
-            array_brackets: Colour::Cyan.bold(),
+            key: Style::new(Color::Green),
+            string_value: Style::new(Color::Blue).bold(),
+            integer_value: Style::new(Color::Magenta).bold(),
+            float_value: Style::new(Color::Magenta).italic(),
+            object_brackets: Style::new(Color::Yellow).bold(),
+            array_brackets: Style::new(Color::Cyan).bold(),
             ..Default::default()
         },
     );
@@ -272,9 +272,9 @@ fn test_styler_compact() -> Result<(), Box<dyn Error>> {
     let f = ColoredFormatter::with_styler(
         CompactFormatter {},
         Styler {
-            key: Color::Green.normal(),
-            string_value: Colour::Blue.bold(),
-            integer_value: Colour::Blue.bold(),
+            key: Style::new(Color::Green),
+            string_value: Style::new(Color::Blue).bold(),
+            integer_value: Style::new(Color::Blue).bold(),
             ..Default::default()
         },
     );
