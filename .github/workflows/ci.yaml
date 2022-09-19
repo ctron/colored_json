@@ -77,4 +77,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --target ${{ matrix.target }} ${{ matrix.features }}
+          args: --target ${{ matrix.target }} ${{ matrix.features }} -- --nocapture --test-threads 1
