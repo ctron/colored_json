@@ -17,7 +17,7 @@
 //!    extern crate colored_json;
 //!    use colored_json::prelude::*;
 //!
-//!    # fn main() -> Result<(), Box<dyn ::std::error::Error>> {
+//!    # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!    println!(
 //!        "{}",
 //!        r#"{
@@ -43,7 +43,7 @@
 //!    use serde_json::{json, Value};
 //!    use colored_json::to_colored_json_auto;
 //!
-//!    # fn main() -> Result<(), Box<dyn ::std::error::Error>> {
+//!    # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!    let val : Value = json!({
 //!      "name": "John Doe",
 //!      "age": 43,
@@ -66,7 +66,7 @@
 //!    use colored_json::prelude::*;
 //!    use colored_json::{Color, Styler};
 //!
-//!    # fn main() -> Result<(), Box<dyn ::std::error::Error>> {
+//!    # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!    println!(
 //!        "{}",
 //!        r#"{
@@ -103,7 +103,7 @@
 //!
 //!    use colored_json::{ColoredFormatter, CompactFormatter, Color, Styler, Style};
 //!
-//!    # fn main() -> Result<(), Box<dyn ::std::error::Error>> {
+//!    # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!    let f = ColoredFormatter::with_styler(
 //!        CompactFormatter {},
 //!        Styler {
@@ -253,7 +253,7 @@ where
         value: &Value,
         writer: &mut W,
         mode: ColorMode,
-    ) -> std::result::Result<(), serde_json::Error>
+    ) -> Result<(), serde_json::Error>
     where
         W: io::Write,
     {

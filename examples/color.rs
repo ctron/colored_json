@@ -1,9 +1,8 @@
-extern crate colored_json;
-extern crate serde_json;
+use colored_json;
 
 use colored_json::prelude::*;
 
-fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
+fn main() -> Result<(), Box<dyn ::std::error::Error>> {
     #[cfg(windows)]
     let _enabled = colored_json::enable_ansi_support();
 
