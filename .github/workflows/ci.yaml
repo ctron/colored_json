@@ -46,7 +46,7 @@ jobs:
           - windows-2019
         toolchain:
           - stable
-          - 1.36.0 # msrv (minimum supported rust version)
+          - 1.54.0 # msrv (minimum supported rust version)
 
     steps:
 
