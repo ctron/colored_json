@@ -12,8 +12,6 @@
 //!For everything, which implements `AsRef<str>`
 //!
 //!```rust
-//!    # extern crate serde_json;
-//!    extern crate colored_json;
 //!    use colored_json::prelude::*;
 //!
 //!    # fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -37,8 +35,6 @@
 //!or for serde_json::Value
 //!
 //!```rust
-//!    # extern crate serde_json;
-//!    # extern crate colored_json;
 //!    use serde_json::{json, Value};
 //!    use colored_json::to_colored_json_auto;
 //!
@@ -60,10 +56,8 @@
 //!With a custom color style:
 //!
 //!```rust
-//!    # extern crate serde_json;
-//!    extern crate colored_json;
 //!    use colored_json::prelude::*;
-//!    use colored_json::{Color, Styler};
+//!    use colored_json::{Color, Style, Styler};
 //!
 //!    # fn main() -> Result<(), Box<dyn std::error::Error>> {
 //!    println!(
@@ -80,12 +74,12 @@
 //!    "#.to_colored_json_with_styler(
 //!        ColorMode::default().eval(),
 //!        Styler {
-//!            key: Color::Green.normal(),
-//!            string_value: Color::Blue.bold(),
-//!            integer_value: Color::Purple.bold(),
-//!            float_value: Color::Purple.italic(),
-//!            object_brackets: Color::Yellow.bold(),
-//!            array_brackets: Color::Cyan.bold(),
+//!            key: Style::new(Color::Green),
+//!            string_value: Style::new(Color::Blue).bold(),
+//!            integer_value: Style::new(Color::Magenta).bold(),
+//!            float_value: Style::new(Color::Magenta).italic(),
+//!            object_brackets: Style::new(Color::Yellow).bold(),
+//!            array_brackets: Style::new(Color::Cyan).bold(),
 //!            ..Default::default()
 //!        })?
 //!    );
@@ -95,9 +89,6 @@
 //!
 //!
 //!```rust
-//!    # extern crate serde_json;
-//!    # extern crate colored_json;
-//!
 //!    use serde_json::json;
 //!
 //!    use colored_json::{ColoredFormatter, CompactFormatter, Color, Styler, Style};
@@ -106,8 +97,8 @@
 //!    let f = ColoredFormatter::with_styler(
 //!        CompactFormatter {},
 //!        Styler {
-//!            key: Color::Green.normal(),
-//!            string_value: Color::Blue.bold(),
+//!            key: Style::new(Color::Green),
+//!            string_value: Style::new(Color::Blue).bold(),
 //!            ..Default::default()
 //!        },
 //!    );
