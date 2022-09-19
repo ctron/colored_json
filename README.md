@@ -1,8 +1,5 @@
 # Colored JSON output for Rust [![ci](https://github.com/ctron/colored_json/actions/workflows/ci.yaml/badge.svg)](https://github.com/ctron/colored_json) [![docs.rs](https://img.shields.io/docsrs/colored_json)](https://docs.rs/colored_json/latest/colored_json/) [![Crates.io](https://img.shields.io/crates/v/colored_json.svg)](https://crates.io/crates/colored_json)
 
-Also see:
- * https: https://crates.io/crates/colored_json
-
 ![Screenshot](Screenshot.png)
 
 ## Using
