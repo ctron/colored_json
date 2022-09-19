@@ -2,11 +2,11 @@ on:
   push:
     # Run on the main branch
     branches:
-      - master
+      - main
 
   pull_request:
     branches:
-      - master
+      - main
 
 
 name: ci
