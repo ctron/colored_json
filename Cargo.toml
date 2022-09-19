@@ -15,9 +15,6 @@ keywords = ["json", "colored", "coloured", "color", "colour"]
 categories = ["command-line-interface", "encoding", "visualization"]
 license = "EPL-2.0"
 
-[badges]
-travis-ci = { repository = "ctron/colored_json", branch = "master" }
-
 [dependencies]
 serde = "1"
 serde_json = "1"
