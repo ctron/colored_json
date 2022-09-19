@@ -141,8 +141,6 @@ pub use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use serde_json::value::Value;
 use std::io;
 
-#[cfg(windows)]
-pub use yansi::enable_ascii_colors;
 pub use yansi::{Color, Style};
 
 /// Enable ANSI support (on Windows).
@@ -153,13 +151,13 @@ pub use yansi::{Color, Style};
 /// The function is also available on other platforms, but is a no-op in this case. So you can call
 /// this function in any case.
 ///
-/// You can also directly call the function [`yansi::enable_ansi_colors`], or use any other means
+/// You can also directly call the function [`yansi::Paint::enable_windows_ascii`], or use any other means
 /// of enabling the virtual ANSI console in Windows. Maybe some other part of your application
 /// already does that.
 #[inline]
 pub fn enable_ansi_support() -> Result<(), ()> {
     #[cfg(windows)]
-    if !yansi::enable_ascii_colors() {
+    if !yansi::Paint::enable_windows_ascii() {
         return Err(());
     }
     Ok(())
