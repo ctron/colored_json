@@ -1,6 +1,6 @@
 [package]
 name = "colored_json"
-version = "3.0.0"
+version = "3.0.1"
 edition = "2018"
 authors = ["Jens Reimann <jreimann@redhat.com>", "Harald Hoyer <harald@redhat.com>"]
 description = "Colorize JSON, for printing it out on the command line"
@@ -8,7 +8,7 @@ description = "Colorize JSON, for printing it out on the command line"
 homepage = "https://github.com/ctron/colored_json"
 repository = "https://github.com/ctron/colored_json"
 documentation = "https://docs.rs/colored_json"
-readme = "CRATE-README.md"
+readme = "README.md"
 exclude = [ "Screenshot.png" ]
 
 keywords = ["json", "colored", "coloured", "color", "colour"]

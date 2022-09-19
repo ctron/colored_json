@@ -1,4 +1,4 @@
-# Colored JSON output for Rust [![Travis (.org)](https://img.shields.io/travis/ctron/colored_json.svg)](https://travis-ci.org/ctron/colored_json) [![Crates.io](https://img.shields.io/crates/v/colored_json.svg)](https://crates.io/crates/colored_json)
+# Colored JSON output for Rust [![ci](https://github.com/ctron/colored_json/actions/workflows/ci.yaml/badge.svg)](https://github.com/ctron/colored_json) [![docs.rs](https://img.shields.io/docsrs/colored_json)](https://docs.rs/colored_json/latest/colored_json/) [![Crates.io](https://img.shields.io/crates/v/colored_json.svg)](https://crates.io/crates/colored_json)
 
 Also see:
  * https: https://crates.io/crates/colored_json
@@ -11,7 +11,7 @@ Add it to your project:
 
 ~~~toml
 [dependencies]
-colored_json = "2"
+colored_json = "3"
 ~~~
 
 And then color your JSON output:
