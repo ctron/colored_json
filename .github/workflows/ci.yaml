@@ -33,18 +33,20 @@ jobs:
           args: --all -- --check
 
   check:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
 
     needs:
       - format
 
     strategy:
       matrix:
+        os:
+          - ubuntu-22.04
+          - macos-12
+          - windows-2019
         toolchain:
           - stable
           - 1.36.0 # msrv (minimum supported rust version)
-        target:
-          - x86_64-unknown-linux-gnu
 
     steps:
 
@@ -58,23 +60,21 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ matrix.target }}-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
+          key: ${{ runner.os }}-cargo-${{ matrix.os }}-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.toolchain }}
-          target: ${{ matrix.target }}
           override: true
 
       - name: Run cargo check
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --target ${{ matrix.target }} ${{ matrix.features }}
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --target ${{ matrix.target }} ${{ matrix.features }} -- --nocapture --test-threads 1
+          args: -- --nocapture --test-threads 1
