@@ -19,18 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: rustfmt
-
       - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo fmt --all -- --check
 
   check:
     runs-on: ${{ matrix.os }}
@@ -63,18 +53,12 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ matrix.os }}-${{ matrix.toolchain }}-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.toolchain }}
-          override: true
+        run: |
+          rustup toolchain install ${{ matrix.toolchain }}
+          rustup default ${{ matrix.toolchain }}
 
       - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
+        run: cargo +${{ matrix.toolchain }} check
 
       - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: -- --nocapture --test-threads 1
+        run: cargo +${{ matrix.toolchain }} test -- --nocapture --test-threads 1
