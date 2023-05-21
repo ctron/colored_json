@@ -167,6 +167,8 @@ pub mod prelude {
 pub struct Styler {
     /// style of object brackets
     pub object_brackets: Style,
+    /// style of object colons
+    pub object_colon: Style,
     /// style of array brackets
     pub array_brackets: Style,
     /// style of object
@@ -190,6 +192,7 @@ impl Default for Styler {
     fn default() -> Styler {
         Styler {
             object_brackets: Style::default().bold(),
+            object_colon: Style::default(),
             array_brackets: Style::default().bold(),
             key: Style::default().fg(Color::Blue).bold(),
             string_value: Style::default().fg(Color::Green),
@@ -273,9 +276,12 @@ where
 {
     let mut w: Vec<u8> = Vec::with_capacity(128);
     handler(&mut w)?;
-    let s = String::from_utf8_lossy(&w);
 
-    writer.write_all(style.paint(s).to_string().as_bytes())?;
+    if !w.is_empty() {
+        let s = String::from_utf8_lossy(&w);
+        writer.write_all(style.paint(s).to_string().as_bytes())?;
+    }
+
     Ok(())
 }
 
@@ -510,8 +516,9 @@ where
         W: io::Write,
     {
         self.in_object_key = false;
-        self.formatter.end_object_key(writer)?;
-        Ok(())
+        colored(writer, self.styler.object_colon, |w| {
+            self.formatter.end_object_key(w)
+        })
     }
 
     fn begin_object_value<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
@@ -519,7 +526,9 @@ where
         W: io::Write,
     {
         self.in_object_key = false;
-        self.formatter.begin_object_value(writer)
+        colored(writer, self.styler.object_colon, |w| {
+            self.formatter.begin_object_value(w)
+        })
     }
 
     fn end_object_value<W: ?Sized>(&mut self, writer: &mut W) -> io::Result<()>
