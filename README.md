@@ -14,8 +14,6 @@ colored_json = "3"
 And then color your JSON output:
 
 ~~~rust
-extern crate colored_json;
-
 use colored_json::prelude::*;
 
 fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
@@ -40,8 +38,6 @@ fn main() -> ::std::result::Result<(), Box<::std::error::Error>> {
 Or directly write it out:
 
 ~~~rust
-extern crate serde_json;
-extern crate colored_json;
 use serde_json::{from_str, Value};
 use std::io::stdout;
 use std::io::Write;
