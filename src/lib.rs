@@ -155,9 +155,6 @@ pub fn enable_ansi_support() -> Result<(), ()> {
     Ok(())
 }
 
-#[cfg(test)]
-mod test;
-
 pub mod prelude {
     pub use crate::ColorMode;
     pub use crate::ToColoredJson;
