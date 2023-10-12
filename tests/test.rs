@@ -1,4 +1,4 @@
-use crate::*;
+use colored_json::*;
 use serde_json::json;
 use std::error::Error;
 use std::io::Write;
