@@ -300,3 +300,27 @@ fn test_styler_compact() -> Result<(), Box<dyn Error>> {
 
     return Ok(());
 }
+
+#[test]
+fn test_serializes() -> Result<(), Box<dyn Error>> {
+    #[cfg(windows)]
+    let _res = enable_ansi_support();
+
+    #[derive(serde::Serialize)]
+    struct Data<'a> {
+        name: &'a str,
+        age: usize,
+        phones: &'a [&'a str],
+    }
+
+    let data = Data {
+        name: "John Doe",
+        age: 43,
+        phones: &["+44 1234567", "+44 2345678"],
+    };
+
+    let s = to_colored_json_auto(&data)?;
+    println!("\n{}", s);
+
+    return Ok(());
+}
