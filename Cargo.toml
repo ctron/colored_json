@@ -1,7 +1,7 @@
 [package]
 name = "colored_json"
 version = "3.3.0"
-edition = "2018"
+edition = "2021"
 authors = ["Jens Reimann <jreimann@redhat.com>", "Harald Hoyer <harald@redhat.com>"]
 description = "Colorize JSON, for printing it out on the command line"
 
