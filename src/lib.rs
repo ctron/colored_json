@@ -145,6 +145,7 @@ pub use yansi::{Color, Style};
 /// You can also directly call the function [`yansi::Paint::enable_windows_ascii`], or use any other means
 /// of enabling the virtual ANSI console in Windows. Maybe some other part of your application
 /// already does that.
+#[allow(clippy::result_unit_err)]
 #[inline]
 pub fn enable_ansi_support() -> Result<(), ()> {
     #[cfg(windows)]
@@ -237,12 +238,18 @@ where
     }
 
     #[allow(clippy::wrong_self_convention)]
-    pub fn to_colored_json_auto(self, value: &Value) -> serde_json::Result<String> {
+    pub fn to_colored_json_auto<T>(self, value: &T) -> serde_json::Result<String>
+    where
+        T: Serialize,
+    {
         self.to_colored_json(value, ColorMode::Auto(Output::StdOut))
     }
 
     #[allow(clippy::wrong_self_convention)]
-    pub fn to_colored_json(self, value: &Value, mode: ColorMode) -> serde_json::Result<String> {
+    pub fn to_colored_json<T>(self, value: &T, mode: ColorMode) -> serde_json::Result<String>
+    where
+        T: Serialize,
+    {
         let mut writer: Vec<u8> = Vec::with_capacity(128);
 
         self.write_colored_json(value, &mut writer, mode)?;
@@ -250,14 +257,15 @@ where
         Ok(String::from_utf8_lossy(&writer).to_string())
     }
 
-    pub fn write_colored_json<W>(
+    pub fn write_colored_json<W, T>(
         self,
-        value: &Value,
+        value: &T,
         writer: &mut W,
         mode: ColorMode,
     ) -> Result<(), serde_json::Error>
     where
         W: io::Write,
+        T: Serialize,
     {
         if mode.use_color() {
             let mut serializer = serde_json::Serializer::with_formatter(writer, self);
@@ -667,11 +675,17 @@ where
 ///
 /// Serialization can fail if `T`'s implementation of `Serialize` decides to
 /// fail, or if `T` contains a map with non-string keys.
-pub fn to_colored_json_auto(value: &Value) -> serde_json::Result<String> {
+pub fn to_colored_json_auto<T>(value: &T) -> serde_json::Result<String>
+where
+    T: Serialize,
+{
     to_colored_json(value, ColorMode::Auto(Output::StdOut))
 }
 
-pub fn to_colored_json(value: &Value, mode: ColorMode) -> serde_json::Result<String> {
+pub fn to_colored_json<T>(value: &T, mode: ColorMode) -> serde_json::Result<String>
+where
+    T: Serialize,
+{
     let mut writer: Vec<u8> = Vec::with_capacity(128);
 
     write_colored_json_with_mode(value, &mut writer, mode)?;
@@ -686,20 +700,22 @@ pub fn to_colored_json(value: &Value, mode: ColorMode) -> serde_json::Result<Str
 ///
 /// Serialization can fail if `T`'s implementation of `Serialize` decides to
 /// fail, or if `T` contains a map with non-string keys.
-pub fn write_colored_json<W>(value: &Value, writer: &mut W) -> serde_json::Result<()>
+pub fn write_colored_json<W, T>(value: &T, writer: &mut W) -> serde_json::Result<()>
 where
     W: io::Write,
+    T: Serialize,
 {
     write_colored_json_with_mode(value, writer, ColorMode::Auto(Output::StdOut))
 }
 
-pub fn write_colored_json_with_mode<W>(
-    value: &Value,
+pub fn write_colored_json_with_mode<W, T>(
+    value: &T,
     writer: &mut W,
     mode: ColorMode,
 ) -> serde_json::Result<()>
 where
     W: io::Write,
+    T: Serialize,
 {
     if mode.use_color() {
         let formatter = ColoredFormatter::new(PrettyFormatter::new());
@@ -712,9 +728,7 @@ where
     }
 }
 
-/**
-    ColorMode is a switch to enforce color mode, turn it off or auto-detect, if it should be used
-**/
+/// ColorMode is a switch to enforce color mode, turn it off or auto-detect, if it should be used
 #[derive(Clone, Copy, PartialEq)]
 pub enum ColorMode {
     On,
@@ -766,7 +780,7 @@ impl ColorMode {
     ///
     /// # Example:
     ///
-    /// ~~~rust
+    /// ```rust
     /// # use colored_json::{ColorMode, Output};
     /// let on_off = ColorMode::default().eval();
     ///
@@ -774,7 +788,7 @@ impl ColorMode {
     ///     ColorMode::On | ColorMode::Off => true,
     ///     _ => false
     /// });
-    /// ~~~
+    /// ```
     pub fn eval(self) -> Self {
         if self.use_color() {
             ColorMode::On
