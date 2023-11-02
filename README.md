@@ -8,7 +8,7 @@ Add it to your project:
 
 ~~~toml
 [dependencies]
-colored_json = "3"
+colored_json = "4"
 ~~~
 
 And then color your JSON output:
