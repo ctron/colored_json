@@ -125,12 +125,11 @@
 //!    # }
 //!```
 
-use is_terminal::IsTerminal;
 use serde::Serialize;
 use serde_json::ser::Formatter;
 pub use serde_json::ser::{CompactFormatter, PrettyFormatter};
 use serde_json::value::Value;
-use std::io;
+use std::io::{self, IsTerminal};
 
 pub use yansi::{Color, Style};
 
@@ -763,8 +762,8 @@ pub enum Output {
 impl ColorMode {
     fn is_tty(output: Output) -> bool {
         match output {
-            Output::StdOut => std::io::stdout().is_terminal(),
-            Output::StdErr => std::io::stderr().is_terminal(),
+            Output::StdOut => io::stdout().is_terminal(),
+            Output::StdErr => io::stderr().is_terminal(),
         }
     }
 
